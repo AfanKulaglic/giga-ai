@@ -530,24 +530,21 @@ export function applyDeterministicFixes(
 
 Dostava: ________ KM (težina nije unesena u sistem — dopunite iznos)`;
   }
-  if (codes.has('package_total_missing') && ctx.packageQuote) {
-    text = `${text.replace(/\s+$/, '')}` + '\n\n' + packageTotalsText(ctx.packageQuote);
-  }
   if (ctx.packageQuote && (codes.has('package_delivery_split') || codes.has('package_total_missing'))) {
     // Kod paketa se svaka pojedinacna dostava uklanja; ostaje jedna, za cijeli paket.
+    // Uklanja se svaka CJENOVNA dostava (po proizvodu ili star ukupni red);
+    // red o roku isporuke ostaje. Paketni blok na kraju dodaje tačno jednu.
     const keepLine = (line: string) =>
-      !/dostav/i.test(line) || /ukupno|paket|rok|dana|radnih/i.test(line);
+      !/dostav[a-zčćžšđ]*[^.!?\n]{0,30}KM/iu.test(line) || /rok|dana|radnih/i.test(line);
     text = text
       .split(/\n/u)
       .filter(keepLine)
       .join('\n')
       .replace(/\n{3,}/gu, '\n\n')
       .trim();
-    // Cijena proizvoda i dalje mora ostati u poruci — ako je linija nestala,
-    // paketni blok je vraća zajedno sa ukupnim iznosom.
-    if (!hasPackageTotal(text)) {
-      text = `${text}\n\n${packageTotalsText(ctx.packageQuote)}`;
-    }
+    // Nakon uklanjanja pojedinačnih dostava uvijek ide jedan paketni blok:
+    // on nosi tačno jednu dostavu za cijeli paket i ukupan iznos.
+    text = text + String.fromCharCode(10, 10) + packageTotalsText(ctx.packageQuote);
   }
 
   if (codes.has('offer_link_missing') && ctx.offerLink) {
