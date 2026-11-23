@@ -1,6 +1,6 @@
 import { requireAuth } from '@/lib/api/auth';
 import { ApiError, jsonError, ok } from '@/lib/api/errors';
-import { aiKeyCount, aiKeyStatus, selectAIKey } from '@/lib/ai/client';
+import { aiKeyCount, aiKeyStatus, aiUsableKeyCount, selectAIKey } from '@/lib/ai/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
     await requireAuth(req);
-    return ok({ count: aiKeyCount(), keys: aiKeyStatus() });
+    return ok({ count: aiUsableKeyCount(), total: aiKeyCount(), keys: aiKeyStatus() });
   } catch (err) {
     return jsonError(err);
   }
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     if (!Number.isInteger(index)) throw new ApiError(400, 'Nedostaje broj ključa.', 'invalid_index');
     const result = selectAIKey(index);
     if (!result.ok) throw new ApiError(409, result.message, 'ai_key_unavailable');
-    return ok({ count: aiKeyCount(), keys: aiKeyStatus(), message: result.message });
+    return ok({ count: aiUsableKeyCount(), total: aiKeyCount(), keys: aiKeyStatus(), message: result.message });
   } catch (err) {
     return jsonError(err);
   }

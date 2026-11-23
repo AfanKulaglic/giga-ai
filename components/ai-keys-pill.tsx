@@ -9,6 +9,8 @@ interface KeyInfo {
   label: string;
   usableInMs: number;
   preferred: boolean;
+  disabled: boolean;
+  disabledReason: string | null;
 }
 
 function waitLabel(ms: number): string {
@@ -93,26 +95,31 @@ export function AIKeysPill() {
     >
       <KeyRound className="h-3.5 w-3.5 text-muted-foreground" />
       {keys.map((key) => {
-        const used = key.usableInMs > 0;
+        const busyKey = key.usableInMs > 0;
         return (
           <button
             key={key.index}
             type="button"
-            disabled={busy || used}
+            disabled={busy || busyKey || key.disabled}
             onClick={() => void choose(key.index)}
-            aria-label={`AI ključ ${key.index + 1}${used ? ' (potrošen)' : ''}${key.preferred ? ' — aktivan' : ''}`}
+            aria-label={`AI ključ ${key.index + 1}${key.disabled ? ' (neupotrebljiv)' : busyKey ? ' (potrošen)' : ''}${key.preferred ? ' — aktivan' : ''}`}
             title={
-              used
-                ? `Ključ ${key.index + 1} je potrošen — slobodan za ${waitLabel(key.usableInMs)}`
-                : `Prebaci na ključ ${key.index + 1}`
+              key.disabled
+                ? `Ključ ${key.index + 1} je trajno isključen — ${key.disabledReason ?? 'odbijen je'}.`
+                : busyKey
+                  ? `Ključ ${key.index + 1} je potrošen — slobodan za ${waitLabel(key.usableInMs)}`
+                  : `Prebaci na ključ ${key.index + 1}`
             }
             className={cn(
               'inline-flex h-5 min-w-[16px] items-center justify-center rounded px-1 text-[10.5px] font-semibold tabular-nums transition-colors',
-              used
-                ? 'cursor-not-allowed bg-muted text-muted-foreground/50 line-through'
-                : key.preferred
-                  ? 'bg-[hsl(var(--success))] text-white'
-                  : 'text-muted-foreground hover:bg-muted',
+              // Trajno isključen ključ ima crvenu crtu — nije „potrošen do sutra”.
+              key.disabled
+                ? 'cursor-not-allowed bg-[hsl(var(--danger)/0.12)] text-[hsl(var(--danger))] line-through'
+                : busyKey
+                  ? 'cursor-not-allowed bg-muted text-muted-foreground/50 line-through'
+                  : key.preferred
+                    ? 'bg-[hsl(var(--success))] text-white'
+                    : 'text-muted-foreground hover:bg-muted',
             )}
           >
             {key.index + 1}

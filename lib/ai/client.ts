@@ -81,6 +81,8 @@ export function aiKeyStatus(): {
   label: string;
   usableInMs: number;
   preferred: boolean;
+  disabled: boolean;
+  disabledReason: string | null;
 }[] {
   const keys = keyRotator();
   return keys.status().map((entry) => {
@@ -90,8 +92,15 @@ export function aiKeyStatus(): {
       label: key.length > 10 ? `${key.slice(0, 6)}…${key.slice(-4)}` : key,
       usableInMs: entry.usableInMs,
       preferred: keys.preferred === entry.index,
+      disabled: entry.disabled,
+      disabledReason: entry.disabledReason,
     };
   });
+}
+
+/** Koliko ključeva stvarno može odgovoriti (trajno odbijeni se ne broje). */
+export function aiUsableKeyCount(): number {
+  return keyRotator().usableCount;
 }
 
 /** Lets the agent force a specific key (e.g. to test the second account). */
@@ -99,6 +108,9 @@ export function selectAIKey(index: number): { ok: boolean; message: string } {
   const keys = keyRotator();
   if (!Number.isInteger(index) || index < 0 || index >= keys.size) {
     return { ok: false, message: `Ključ ${index + 1} ne postoji.` };
+  }
+  if (keys.isDisabled(index)) {
+    return { ok: false, message: `Ključ ${index + 1} je trajno isključen (nema pravo na besplatni paket).` };
   }
   const wait = keys.waitFor(index);
   if (wait > 0) {
@@ -217,6 +229,14 @@ export async function chatCompletion(options: CompletionOptions): Promise<Comple
   for (let attempt = 0; attempt < attempts; attempt++) {
     const active = keys.pick();
     if (!active.key) {
+      if (keys.usableCount === 0) {
+        // Nema više nijednog upotrebljivog ključa — to je postavka, ne privremeni limit.
+        throw new ApiError(
+          503,
+          `${serverEnv.ai.label}: nijedan AI ključ nije upotrebljiv. Provjerite ključeve u Postavkama ili dodajte novi u .env.local.`,
+          'ai_no_usable_key',
+        );
+      }
       const minutes = Math.max(1, Math.ceil(active.retryInMs / 60000));
       throw new ApiError(
         503,
@@ -247,9 +267,23 @@ export async function chatCompletion(options: CompletionOptions): Promise<Comple
         const retryAfterRaw = res.headers.get('retry-after');
         const retryAfter = retryAfterRaw ? Number(retryAfterRaw) : null;
         const toolUseFailed = res.status === 400 && /tool_use_failed|Tool choice is none/i.test(text);
-        // Quota or a dead key: park it and try the next account straight away.
+        // Kvota ili mrtav ključ: parkiraj ga i odmah probaj sljedeći račun.
         const keyProblem = res.status === 429 || res.status === 401 || res.status === 403;
-        if (keyProblem && keys.size > 1 && attempt < attempts - 1) {
+        // 403 „free tier is not available for this project” i neispravan ključ se
+        // ne popravljaju čekanjem — takav ključ se isključuje trajno.
+        const permanentlyDead =
+          res.status === 403 ||
+          (res.status === 401 && /API_KEY_INVALID|API key not valid/i.test(text)) ||
+          (res.status === 400 && /API key not valid/i.test(text));
+        if (permanentlyDead) {
+          const reason = /free tier is not available/i.test(text)
+            ? 'projekat nema pravo na besplatni paket (treba novi Google projekat ili naplata)'
+            : 'ključ je odbijen (neispravan ili opozvan)';
+          keys.disable(active.index, reason);
+          console.warn(`[ai:${serverEnv.ai.provider}] key ${active.index + 1} trajno isključen: ${reason}`);
+          if (keys.usableCount > 0 && attempt < attempts - 1) continue;
+        }
+        if (keyProblem && keys.usableCount > 1 && attempt < attempts - 1) {
           keys.coolDown(
             active.index,
             res.status === 429

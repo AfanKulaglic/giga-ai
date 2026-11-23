@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { configurationStatus } from '@/lib/config/env';
+import { configurationStatus, isServerless, missingEnv } from '@/lib/config/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,10 +7,22 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const status = configurationStatus();
-    return NextResponse.json({ ok: true, ...status });
+    return NextResponse.json({ ok: true, serverless: isServerless(), missingEnv: missingEnv(), ...status });
   } catch (err) {
+    // Poruka mora reći šta tačno dodati, inače deploy izgleda „pokvaren”.
     return NextResponse.json(
-      { ok: false, error: err instanceof Error ? err.message : 'Konfiguracija nije ispravna.' },
+      {
+        ok: false,
+        serverless: isServerless(),
+        missingEnv: (() => {
+          try {
+            return missingEnv();
+          } catch {
+            return [];
+          }
+        })(),
+        error: err instanceof Error ? err.message : 'Konfiguracija nije ispravna.',
+      },
       { status: 500 },
     );
   }

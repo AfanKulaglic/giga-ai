@@ -87,6 +87,9 @@ const WorkspaceContext = React.createContext<WorkspaceValue | null>(null);
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const [bootstrap, setBootstrap] = React.useState<BootstrapResponse | null>(null);
+  // Prvi pokušaj učitavanja je završen — uspio ili nije. Bez ovoga neuspjeh
+  // ostavlja vječit skeleton i agent ne vidi poruku greške.
+  const [bootstrapped, setBootstrapped] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = React.useState<string | null>(null);
   const [detail, setDetail] = React.useState<SessionDetail | null>(null);
@@ -109,6 +112,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Nije moguće učitati podatke.');
+    } finally {
+      setBootstrapped(true);
     }
   }, []);
 
@@ -575,7 +580,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [bootstrap, calcItems, manualDiscount]);
 
   const value: WorkspaceValue = {
-    ready: Boolean(bootstrap),
+    ready: bootstrapped,
     error,
     bootstrap,
     sessions: bootstrap?.sessions ?? [],

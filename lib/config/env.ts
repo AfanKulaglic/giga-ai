@@ -125,9 +125,20 @@ export function aiMissingKeyMessage(): string {
   return `AI nije konfiguriran (${ai.label}). Dodajte ${ai.keyEnv ?? 'AI_API_KEY'} u .env.local i restartujte aplikaciju.`;
 }
 
+/** Vercel/Netlify/Lambda: fajl-sistem je samo za čitanje, lokalna baza ne radi. */
+export function isServerless(): boolean {
+  return Boolean(process.env.VERCEL || process.env.VERCEL_ENV || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME);
+}
+
 export function storageMode(): 'rtdb' | 'firestore' | 'local' {
   if (isFirebaseAdminConfigured() && serverEnv.firebaseDbUrl) return 'rtdb';
   if (isFirebaseAdminConfigured()) return 'firestore';
+  if (isServerless()) {
+    // Bolje jasna poruka odmah nego 500 u svakom zahtjevu i vječito učitavanje.
+    throw new Error(
+      'Vercel nema trajnu bazu: nedostaje Firebase Realtime Database konfiguracija. Dodajte FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY i FIREBASE_DB_URL u Environment Variables, pa redeploy.',
+    );
+  }
   if (serverEnv.allowLocalMode) return 'local';
   throw new Error(
     'Firebase Admin nije konfiguriran (FIREBASE_PROJECT_ID / FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY), a lokalni način je isključen.',
@@ -137,6 +148,17 @@ export function storageMode(): 'rtdb' | 'firestore' | 'local' {
 /** Active login gate: shared password by default. */
 export function effectiveAuthMode(): 'local' | 'firebase' | 'password' {
   return serverEnv.authMode;
+}
+
+/** Tačno koje varijable nedostaju — imena, nikad vrijednosti. */
+export function missingEnv(): string[] {
+  const missing: string[] = [];
+  if (!serverEnv.firebaseAdmin.projectId) missing.push('FIREBASE_PROJECT_ID');
+  if (!serverEnv.firebaseAdmin.clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
+  if (!serverEnv.firebaseAdmin.privateKey) missing.push('FIREBASE_PRIVATE_KEY (ili FIREBASE_SERVICE_ACCOUNT_BASE64)');
+  if (!serverEnv.firebaseDbUrl) missing.push('FIREBASE_DB_URL');
+  if (!isAIConfigured()) missing.push(serverEnv.ai.keyEnv ?? 'AI_API_KEY');
+  return missing;
 }
 
 export function configurationStatus() {

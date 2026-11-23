@@ -65,3 +65,29 @@ describe('AI provider presets', () => {
     expect(isAIProviderId('nepostoji')).toBe(false);
   });
 });
+
+describe('trajno isključen AI ključ', () => {
+  it('preskače ključ koji nema pravo na besplatni paket', async () => {
+    const { createKeyRotator } = await import('@/lib/ai/keyRotator');
+    const rotator = createKeyRotator(['k1', 'k2', 'k3']);
+    expect(rotator.pick().index).toBe(0);
+    rotator.disable(0, 'projekat nema pravo na besplatni paket');
+    expect(rotator.usableCount).toBe(2);
+    expect(rotator.pick().index).toBe(1);
+    expect(rotator.status()[0]).toMatchObject({ disabled: true, disabledReason: 'projekat nema pravo na besplatni paket' });
+    // Ne može se ručno prebaciti na mrtav ključ.
+    rotator.setPreferred(0);
+    expect(rotator.pick().index).toBe(1);
+  });
+
+  it('kad svi ključevi otpadnu, nema pokušavanja i nema čekanja', async () => {
+    const { createKeyRotator } = await import('@/lib/ai/keyRotator');
+    const rotator = createKeyRotator(['k1', 'k2']);
+    rotator.disable(0, 'opozvan');
+    rotator.disable(1, 'opozvan');
+    expect(rotator.usableCount).toBe(0);
+    const picked = rotator.pick();
+    expect(picked.key).toBe('');
+    expect(picked.retryInMs).toBe(Number.POSITIVE_INFINITY);
+  });
+});
