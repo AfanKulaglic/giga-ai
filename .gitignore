@@ -42,3 +42,7 @@ Thumbs.db
 
 # lokalni snimci ekrana
 shots/
+
+# privremeni snimci sajta (probe)
+p1.json
+giga_home.html
