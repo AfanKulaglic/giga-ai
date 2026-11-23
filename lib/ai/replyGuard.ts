@@ -612,26 +612,18 @@ ${extra}`;
 Akcija traje do isteka zaliha.`;
   }
   if (codes.has('delivery_price_missing') && ctx.deliveryAmount) {
-    text = `${text}\
-\
-Dostava za ovaj proizvod iznosi ${formatMoney(ctx.deliveryAmount.amount, ctx.deliveryAmount.currency)}.`;
+    text = `${text}\n\nDostava za ovaj proizvod iznosi ${formatMoney(ctx.deliveryAmount.amount, ctx.deliveryAmount.currency)}.`;
   }
   if (codes.has('order_data_missing')) {
-    text = `${text}\
-\
-Da bismo poslali narudžbu, potrebni su nam: ime i prezime, telefon, adresa, grad i poštanski broj.`;
+    text = `${text}\n\nDa bismo poslali narudžbu, potrebni su nam: ime i prezime, telefon, adresa, grad i poštanski broj.`;
   }
   if (codes.has('delivery_eta_missing') && !ETA.test(text)) {
-    text = `${text}\
-\
-Dostava dolazi za 2–5 radnih dana.`;
+    text = `${text}\n\nDostava dolazi za 2–5 radnih dana.`;
   }
   if (codes.has('specs_not_shared')) {
     const pairs = (ctx.specPairs ?? []).slice(0, 4);
     if (pairs.length) {
-      text = `${text}\
-\
-${pairs.map((pair) => `${pair.label}: ${pair.value}`).join('\n')}`;
+      text = `${text}\n\n${pairs.map((pair) => `${pair.label}: ${pair.value}`).join('\n')}`;
     }
   }
   if (codes.has('quantity_discount_invented')) {
@@ -696,9 +688,7 @@ Dostupne boje: ${colors.join(', ')}.`;
                 : 'dostava: ________ KM'
             }`,
         );
-      text = `${text}\
-\
-${rows.join('\n')}`;
+      text = `${text}\n\n${rows.join('\n')}`;
     }
   }
   if (codes.has('dimension_choice_missing')) {
