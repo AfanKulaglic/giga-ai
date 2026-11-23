@@ -89,7 +89,10 @@ export function buildPackageQuote(
   }));
 
   const discountLabels = result.discounts.map(
-    (discount) => `${discount.name}${discount.percent !== null ? ` (${discount.percent}%)` : ''}`,
+    (discount) =>
+      discount.percent !== null && !discount.name.includes('%')
+        ? `${discount.name} (${discount.percent}%)`
+        : discount.name,
   );
 
   const missingWeights = lines
@@ -296,4 +299,22 @@ export function packageTotalsText(quote: PackageQuote): string {
 /** Da li poruka već sadrži ukupan iznos (bilo koji oblik)? */
 export function hasPackageTotal(text: string): boolean {
   return /ukupno\s+za\s+pla[ćc]anje|ukupan\s+iznos|sve\s+ukupno|ukupno\s*[::]\s*\d/i.test(text);
+}
+
+
+/**
+ * Model ponekad prepiše cijeli paketni blok iz prompta i doda svoj sažetak,
+ * pa kupac dobije dva puta iste stavke. Ovim se zadržava prvi blok, a drugi
+ * (do zadnjeg „UKUPNO ZA PLAĆANJE” reda) uklanja.
+ */
+export function collapseDuplicatePackageTotals(text: string): string {
+  const rows = text.split(/\n/u);
+  const starts = rows
+    .map((row, index) => (/^ukupno za sve proizvode/iu.test(row.trim()) ? index : -1))
+    .filter((index) => index >= 0);
+  if (starts.length < 2) return text;
+  const lastTotal = rows.map((row) => /ukupno za plaćanje/iu.test(row)).lastIndexOf(true);
+  if (lastTotal <= (starts[1] ?? 0)) return text;
+  rows.splice(starts[1] ?? 0, lastTotal - (starts[1] ?? 0) + 1);
+  return rows.join('\n').replace(/\n{3,}/gu, '\n\n').trim();
 }

@@ -17,7 +17,7 @@ import { chatCompletion } from './client';
 import { CORE_RULES, HARD_STOPS, buildReplySystemPrompt, transcriptBlock } from './prompts';
 import { REPLY_CHECKLIST } from './rules';
 import { applyDeterministicFixes, buildSafeReply, checkCustomerReply, type ReplyGuardContext } from './replyGuard';
-import { buildPackageQuote, narrowPackageCandidates, packagePromptBlock, type PackageQuote, type PackageItemInput } from '@/lib/domain/packageQuote';
+import { buildPackageQuote, collapseDuplicatePackageTotals, narrowPackageCandidates, packagePromptBlock, type PackageQuote, type PackageItemInput } from '@/lib/domain/packageQuote';
 import { liveCheckNotes, refreshLiveProducts, type LiveCheck } from '@/lib/site/gigaLive';
 import {
   isOfferQuestion,
@@ -143,10 +143,33 @@ export async function generateCustomerReply(args: {
   // Pitanje o cijeloj ponudi („koje grebalice imate”) traži širu pretragu od
   // pitanja o jednom proizvodu — inače odgovor preskoči dio asortimana.
   const asksForOffer = isOfferQuestion(lastCustomerMessage?.content ?? '');
-  const [contextProducts, lookupHits] = await Promise.all([
+  const [contextProducts, lookupHitsRaw] = await Promise.all([
     Promise.all(session.context.products.map((p) => store.getProduct(p.productId))),
     lookupQuery ? store.searchProductsWithAdditional(lookupQuery, asksForOffer ? 40 : 6) : Promise.resolve([]),
   ]);
+
+  const lookupHits = [...lookupHitsRaw];
+
+  // Kupac cesto u istoj poruci imenuje vise modela („Aura 4 ladice i Pulsar
+  // 102x40”), a jedna pretraga vrati samo najbolje pogotke za prvi. Zato se
+  // svaka imenovana familija trazi posebno; prihvata se samo ako katalog
+  // stvarno ima proizvode koji POCINJU tom riječju (da „komada” ne prođe).
+  const familyHits: { product: Product; additional: import('@/lib/domain/types').ProductAdditionalData | null }[] = [];
+  const words = (lastCustomerMessage?.content ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9čćžšđ ]/gu, ' ')
+    .split(/[ ]+/u)
+    .filter((word) => word.length >= 4);
+  for (const word of [...new Set(words)]) {
+    if (lookupHits.some((hit) => hit.product.name.toLowerCase().startsWith(word.slice(0, 5)))) continue;
+    const familyKey = word.length >= 5 ? word.slice(0, 5) : word;
+    const hits = await store.searchProductsWithAdditional(word, 4);
+    for (const hit of hits) {
+      if (!hit.product.name.toLowerCase().startsWith(familyKey)) continue;
+      familyHits.push(hit);
+    }
+  }
+  lookupHits.push(...familyHits);
 
   const seen = new Set<string>();
   const knownProducts: { product: Product; additional: import('@/lib/domain/types').ProductAdditionalData | null }[] = [];
@@ -244,6 +267,25 @@ export async function generateCustomerReply(args: {
   const packageSeen = new Set<string>();
   const contextRefs = session.context.products ?? [];
   const textQuantity = parseQuantity(lastCustomerMessage?.content ?? '') ?? 1;
+  // Kolicina se cita IZ PORUKE za svaki proizvod posebno: „2 komada Aura i
+  // jednu Pulsar” ne smije znaciti dvije Pulsar komode.
+  const NUMBER_WORDS: Record<string, number> = {
+    jedan: 1, jednu: 1, jedna: 1, jedne: 1, dva: 2, dvije: 2, dve: 2, tri: 3,
+    četiri: 4, cetiri: 4, pet: 5, šest: 6, sest: 6, sedam: 7, osam: 8, devet: 9, deset: 10,
+  };
+  const quantityFor = (name: string, text: string): number | null => {
+    const tokens = text.toLowerCase().replace(/[^a-z0-9čćžšđ ]/gu, ' ').split(/[ ]+/u).filter(Boolean);
+    const key = (name.toLowerCase().split(' ')[0] ?? '').slice(0, 5);
+    const at = tokens.findIndex((token) => token.startsWith(key));
+    if (at < 0) return null;
+    for (let index = at - 1; index >= Math.max(0, at - 4); index--) {
+      const token = tokens[index]!;
+      if (/^[0-9]{1,3}$/.test(token)) return Number(token);
+      const word = NUMBER_WORDS[token];
+      if (word) return word;
+    }
+    return null;
+  };
   const addPackageItem = (entry: { product: Product; additional: { weightKg?: number | null } | null }) => {
     if (packageSeen.has(entry.product.id)) return;
     packageSeen.add(entry.product.id);
@@ -253,7 +295,7 @@ export async function generateCustomerReply(args: {
       name: entry.product.name,
       sku: entry.product.sku,
       unitPrice: entry.product.price ?? ref?.unitPrice ?? null,
-      quantity: ref?.quantity ?? textQuantity,
+      quantity: quantityFor(entry.product.name, lastCustomerMessage?.content ?? '') ?? ref?.quantity ?? textQuantity,
       weightKg: entry.additional?.weightKg ?? null,
     });
   };
@@ -586,6 +628,9 @@ ${names}`,
     }
   }
 
+  // Kod paketa model ponekad zalijepi dva puta isti blok sa stavkama —
+  // zadrzava se prvi, da kupac ne dobije duple redove.
+  if (packageQuote) body = collapseDuplicatePackageTotals(body);
   const signatureConfigured = Boolean(renderSignature(settings.signature));
   // Praznina za dostavu uvijek isto dugačka (i poslije popravki), da agent ima
   // isto mjesto za ručni upis iznosa.

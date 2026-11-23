@@ -19,6 +19,8 @@ export function sanitizeReplyText(text: string): string {
     out = out.slice(1, -1).trim();
   }
   out = out.replace(/\*\*(.+?)\*\*/g, '$1').replace(/__(.+?)__/g, '$1');
+  // Praznina za dostavu uvijek iste duzine (agent je dopunjava rukom).
+  out = out.replace(/_{2,}([ ]*)KM/g, '________$1KM');
   out = capitalizeSentences(out);
   return out.replace(/\n{3,}/g, '\n').trim();
 }

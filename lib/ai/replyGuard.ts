@@ -75,7 +75,7 @@ const ASKS_ACTION =
 const ASKS_PRICE_CONFIRM =
   /(jel+|je\s+li|da\s+li\s+je)\s+(to|ovo|ov[ao])?\s*(ta|to[cč]na|tacna)?\s*cijena|(jel+|je\s+li)\s+to\s+ta[cč]no|cijena\s+je\s+ta[cč]na|potvrdite?\s+cijenu|ta[cč]na\s+cijena/i;
 // Agent još nije unio težinu: u poruci ostaje praznina za ručni upis iznosa.
-const DELIVERY_BLANK = /(?:dostava|po[šs]tarina)\s*:?\s*[_….]{2,}\s*KM/i;
+const DELIVERY_BLANK = /(?:dostava|po[šs]tarina)[^.!?\n]{0,30}[_….]{2,}\s*KM/iu;
 // Bilo koja napomena o dostavi (iznos, praznina ili „ne možemo izračunati”).
 const DELIVERY_MENTIONED = /dostav[aei]\b/i;
 const MONEY_IN_TEXT = /\d[\d.\s]*(?:[.,]\d{1,2})?\s*(?:KM|BAM)/i;
@@ -128,7 +128,8 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
     });
   }
 
-  if (missingWeight.length && !WEIGHT_STATEMENT.test(text) && !DELIVERY_BLANK.test(text)) {
+  // Kod paketa (R30) praznina za dostavu stoji u paketnom bloku, pa je ovdje ne tražimo.
+  if (!ctx.packageQuote && missingWeight.length && !WEIGHT_STATEMENT.test(text) && !DELIVERY_BLANK.test(text)) {
     issues.push({
       code: 'missing_weight_not_stated',
       hint: 'Uz cijenu napiši i dostavu. Težina nije unesena, pa ostavi prazninu: „dostava: ________ KM”.',
@@ -488,13 +489,38 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
   // R30: dostava je jedna za cijeli paket. Ako se u poruci pojavljuje vise
   // puta (po proizvodu), poruka se popravlja ili se koristi sigurna poruka.
   if (quote) {
-    // Broje se samo CJENOVNE dostave (uz KM); obična rečenica o roku dostave nije greška.
-    const pricedDeliveries = (text.match(/dostav[a-zčćžšđ]*[^.!?\n]{0,30}KM/giu) ?? []).length;
-    if (pricedDeliveries > 1) {
+    // Dostava je dozvoljena samo u redu koji je za CIJELI PAKET, nikad uz pojedinacni
+    // proizvod. Red o roku isporuke se ne racuna (nema iznos ni prazninu).
+    const perProductDelivery = text
+      .split(/\n/u)
+      .filter((line) => {
+        if (!/dostav/iu.test(line)) return false;
+        if (/cijeli paket|ukupno|sveukupno|ukupan iznos/iu.test(line)) return false;
+        if (!/(_|[0-9])/u.test(line)) return false;
+        return !/rok|dana|radnih/iu.test(line);
+      }).length;
+    if (perProductDelivery > 0) {
       issues.push({
         code: 'package_delivery_split',
         hint: 'Dostavu napiši SAMO JEDNOM, za cijeli paket. Nikad po proizvodu i nikad uz svaku cijenu.',
         message: 'Dostava je navedena više puta — kod paketa se piše jedna dostava za sve (R30).',
+      });
+    }
+  }
+
+  // R30: svaki proizvod iz paketa mora biti u poruci — model ne smije preskociti
+  // proizvod koji kupac kupuje (npr. drugi komad iz iste narudzbe).
+  if (quote && quote.lines.length) {
+    const flatText = normalize(text);
+    const missingLine = quote.lines.find((line) => {
+      const name = normalize(line.name).split(' ').slice(0, 3).join(' ');
+      return name.length > 0 && !flatText.includes(name);
+    });
+    if (missingLine) {
+      issues.push({
+        code: 'package_line_missing',
+        hint: `U poruci nedostaje proizvod iz narudžbe: ${missingLine.name}. Navedi ga sa cijenom.`,
+        message: 'U ponudi nedostaje proizvod koji kupac naručuje (R30).',
       });
     }
   }
@@ -530,12 +556,22 @@ export function applyDeterministicFixes(
 
 Dostava: ________ KM (težina nije unesena u sistem — dopunite iznos)`;
   }
-  if (ctx.packageQuote && (codes.has('package_delivery_split') || codes.has('package_total_missing'))) {
-    // Kod paketa se svaka pojedinacna dostava uklanja; ostaje jedna, za cijeli paket.
-    // Uklanja se svaka CJENOVNA dostava (po proizvodu ili star ukupni red);
-    // red o roku isporuke ostaje. Paketni blok na kraju dodaje tačno jednu.
-    const keepLine = (line: string) =>
-      !/dostav[a-zčćžšđ]*[^.!?\n]{0,30}KM/iu.test(line) || /rok|dana|radnih/i.test(line);
+  if (
+    ctx.packageQuote &&
+    (codes.has('package_delivery_split') ||
+      codes.has('package_total_missing') ||
+      codes.has('package_line_missing'))
+  ) {
+    // 1) Iz reda proizvoda se vadi samo dio „, dostava: ________ KM”.
+    text = text.replace(/,[ ]*dostav[a-zčćžšđ]*[ ]*:[ ]*_{2,}[ ]*KM/giu, '');
+    // 2) Red koji i dalje nosi dostavu uz pojedinacni proizvod se uklanja;
+    //    red o roku isporuke ostaje. Paketni blok na kraju dodaje tačno jednu.
+    const keepLine = (line: string) => {
+      if (/rok|dana|radnih/iu.test(line)) return true;
+      if (/cijeli paket|ukupno|sveukupno|ukupan iznos/iu.test(line)) return true;
+      if (!/dostav/iu.test(line)) return true;
+      return !/[0-9_]/u.test(line);
+    };
     text = text
       .split(/\n/u)
       .filter(keepLine)
