@@ -74,7 +74,7 @@ const ASKS_PRICE_CONFIRM =
 // Agent još nije unio težinu: u poruci ostaje praznina za ručni upis iznosa.
 const DELIVERY_BLANK = /(?:dostava|po[šs]tarina)\s*:?\s*[_….]{2,}\s*KM/i;
 // Bilo koja napomena o dostavi (iznos, praznina ili „ne možemo izračunati”).
-const DELIVERY_MENTIONED = /dostav[aei]/i;
+const DELIVERY_MENTIONED = /dostav[aei]\b/i;
 const MONEY_IN_TEXT = /\d[\d.\s]*(?:[.,]\d{1,2})?\s*(?:KM|BAM)/i;
 // R27: popust na količinu nije objavljen nigdje na sajtu — ne smije se izmisliti.
 const QUANTITY_DISCOUNT =
@@ -477,6 +477,14 @@ export function applyDeterministicFixes(
 ): string {
   let text = body.trim();
   const codes = new Set(issues.map((issue) => issue.code));
+
+  // R29 — gramatika koju model cesto pokvari: "ime, prezimenom" nije bosanski.
+  text = text
+    .replace(/\bime\s*[,/]?\s*prezimenom\b/giu, 'ime i prezime')
+    .replace(/\bime\s+i\s+prezimenom\b/giu, 'ime i prezime')
+    .replace(/\bprezimenom\b/giu, 'prezime')
+    .replace(/\bprezimeom\b/giu, 'prezime')
+    .replace(/\bime\s+i\s+prezime\s+i\s+prezime\b/giu, 'ime i prezime');
 
   if (codes.has('missing_weight_not_stated') && !WEIGHT_STATEMENT.test(text) && !DELIVERY_BLANK.test(text)) {
     text = `${text}

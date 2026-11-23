@@ -27,7 +27,7 @@ export function SessionHeader() {
   const [query, setQuery] = React.useState('');
   const [editing, setEditing] = React.useState(false);
   const [label, setLabel] = React.useState('');
-  const [confirmDelete, setConfirmDelete] = React.useState(false);
+  const [confirmDelete, setConfirmDelete] = React.useState<{ id: string; label: string } | null>(null);
 
   const active = detail?.session ?? sessions.find((s) => s.id === activeSessionId) ?? null;
 
@@ -120,7 +120,28 @@ export function SessionHeader() {
                       {s.context.products.length ? ` · ${s.context.products.length} proizvod(a)` : ''}
                     </span>
                   </span>
-                  {s.context.orderIntent.value === 'confirmed' ? <Badge tone="green">narudžba</Badge> : null}
+                  <span className="flex shrink-0 items-center gap-1.5">
+                    {s.context.orderIntent.value === 'confirmed' ? <Badge tone="green">narudžba</Badge> : null}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Obriši sesiju ${s.label}`}
+                      title="Obriši sesiju"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setConfirmDelete({ id: s.id, label: s.label });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.stopPropagation();
+                          setConfirmDelete({ id: s.id, label: s.label });
+                        }
+                      }}
+                      className="grid h-6 w-6 place-items-center rounded-md text-muted-foreground/70 transition-colors hover:bg-danger/10 hover:text-danger"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </span>
+                  </span>
                 </button>
               ))}
               {archived.length ? (
@@ -217,7 +238,7 @@ export function SessionHeader() {
               size="icon-sm"
               title="Obriši sesiju"
               aria-label="Obriši sesiju"
-              onClick={() => setConfirmDelete(true)}
+              onClick={() => active && setConfirmDelete({ id: active.id, label: active.label })}
             >
               <Trash2 className="h-3.5 w-3.5 text-danger/80" />
             </Button>
@@ -233,22 +254,25 @@ export function SessionHeader() {
 
       <QuickRepliesBar />
 
-      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+      <Dialog open={Boolean(confirmDelete)} onOpenChange={(open) => !open && setConfirmDelete(null)}>
         <DialogContent>
           <DialogHeader
             title="Obrisati sesiju?"
-            description="Trajno se brišu poruke, AI razgovor i nacrti odgovora ove sesije. Ova radnja se ne može poništiti."
+            description={`„${confirmDelete?.label ?? ''}” — trajno se brišu poruke, AI razgovor i nacrti odgovora. Ova radnja se ne može poništiti.`}
           />
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>
+            <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(null)}>
               Odustani
             </Button>
             <Button
               variant="danger"
               size="sm"
               onClick={async () => {
-                await deleteSession(active!.id);
-                setConfirmDelete(false);
+                const target = confirmDelete;
+                setConfirmDelete(null);
+                if (!target) return;
+                setPickerOpen(false);
+                await deleteSession(target.id);
                 toast({ title: 'Sesija je obrisana' });
               }}
             >

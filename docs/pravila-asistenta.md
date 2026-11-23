@@ -194,3 +194,9 @@ Napomene za uređivanje:
 - Ako kupac uzme više različitih proizvoda, a jedan od njih je naručen više puta, popust se računa samo na količinu tog proizvoda.
 - Procenti se nikada ne izmišljaju: asistent navodi samo pragove koji su podešeni u Postavkama. Ako prag nije podešen, popust se ne nudi.
 - Tačan iznos popusta i ukupan iznos računa kalkulator u aplikaciji, ne asistent.
+
+**R29 — Ime i prezime se piše ispravno (24.11.2026)**
+- U svakoj poruci kupcu koristi se tačan izraz „ime i prezime”. Nikad se ne piše „prezimenom”, „prezimeom”, „ime, prezimenom” niti bilo koja iskrivljena forma.
+- Kada se traže podaci za narudžbu, rečenica glasi: „Molimo Vas da nam pošaljete ime i prezime, kontakt telefon, adresu, grad i poštanski broj.”
+- Isto važi za sve ostale riječi: „adresa”, „grad”, „poštanski broj”, „telefon” — bez izmišljenih oblika i bez spajanja dvije riječi u jednu.
+- Ako model ipak pogriješi, aplikacija sama ispravlja oblik prije nego što se poruka prikaže agentu.

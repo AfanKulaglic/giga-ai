@@ -276,7 +276,7 @@ export async function generateCustomerReply(args: {
   const dimensionBlocks: string[] = [];
   const colorOptions: { label: string }[] = [];
   // A customer who already wrote "102 x 40" picked a size — never ask again.
-  const customerNamedSize = /\d{2,3}\s*[x×]\s*\d{2,3}/i.test(customerText);
+  const customerNamedSize = /\b\d{2,3}\s*[x×]\s*\d{2,3}\b/i.test(customerText);
   // The topic product is the first ranked one that really has several options;
   // without this, a set of unrelated products would hide the real question.
   for (const { product } of customerNamedSize ? [] : confirmedProducts.slice(0, 3)) {

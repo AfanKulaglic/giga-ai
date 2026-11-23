@@ -472,3 +472,20 @@ describe('link na kategoriju kada kupac pita šta sve imate', () => {
     expect(safe).toContain('Recite nam koji model');
   });
 });
+
+describe('R29 — ime i prezime', () => {
+  it('ispravi „ime, prezimenom” u „ime i prezime”', () => {
+    const body =
+      'AURA KOMODA je dostupna po cijeni od 130,00 KM.\n\nMolimo Vas da nam pošaljete Vaše ime, prezimenom, kontakt telefon, adresu, grad i poštanski broj.';
+    const fixed = applyDeterministicFixes(body, { products: [{ product: product(), additional: null }], customerMessage: '' }, []);
+    expect(fixed).toContain('ime i prezime');
+    expect(fixed).not.toMatch(/prezimenom/i);
+  });
+
+  it('ne pravi duplikat kad je već ispravno', () => {
+    const body = 'Molimo Vas da nam pošaljete ime i prezime i adresu.';
+    const fixed = applyDeterministicFixes(body, { products: [{ product: product(), additional: null }], customerMessage: '' }, []);
+    expect(fixed).toContain('ime i prezime');
+    expect(fixed).not.toContain('prezime i prezime');
+  });
+});
