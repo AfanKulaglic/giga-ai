@@ -1,0 +1,2887 @@
+[
+{
+"code": "70101",
+"place": "Jajce",
+"post": "HP Mostar"
+},
+{
+"code": "70202",
+"place": "Vinac",
+"post": "BH Pošta"
+},
+{
+"code": "70204",
+"place": "Divičani",
+"post": "HP Mostar"
+},
+{
+"code": "70206",
+"place": "Jezero",
+"post": "Pošte Srpske"
+},
+{
+"code": "70210",
+"place": "Dobretići",
+"post": "HP Mostar"
+},
+{
+"code": "70220",
+"place": "Donji Vakuf",
+"post": "BH Pošta"
+},
+{
+"code": "70223",
+"place": "Prusac",
+"post": "BH Pošta"
+},
+{
+"code": "70224",
+"place": "Torlakovac",
+"post": "BH Pošta"
+},
+{
+"code": "70225",
+"place": "Oborci",
+"post": "BH Pošta"
+},
+{
+"code": "70230",
+"place": "Bugojno",
+"post": "BH Pošta"
+},
+{
+"code": "70233",
+"place": "Gračanica kod Bugojna",
+"post": "BH Pošta"
+},
+{
+"code": "70234",
+"place": "Vesela",
+"post": "BH Pošta"
+},
+{
+"code": "70235",
+"place": "Karadže",
+"post": "BH Pošta"
+},
+{
+"code": "70237",
+"place": "Drvetine",
+"post": "BH Pošta"
+},
+{
+"code": "70240",
+"place": "Gornji Vakuf",
+"post": "BH Pošta"
+},
+{
+"code": "70243",
+"place": "Pajić Polje",
+"post": "BH Pošta"
+},
+{
+"code": "70260",
+"place": "Mrkonjić Grad",
+"post": "Pošte Srpske"
+},
+{
+"code": "70266",
+"place": "Podrašnica",
+"post": "Pošte Srpske"
+},
+{
+"code": "70267",
+"place": "Baraći",
+"post": "Pošte Srpske"
+},
+{
+"code": "70270",
+"place": "Šipovo",
+"post": "Pošte Srpske"
+},
+{
+"code": "70273",
+"place": "Strojice",
+"post": "Pošte Srpske"
+},
+{
+"code": "70275",
+"place": "Pljeva",
+"post": "Pošte Srpske"
+},
+{
+"code": "70280",
+"place": "Uskoplje",
+"post": "HP Mostar"
+},
+{
+"code": "71000",
+"place": "Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71101",
+"place": "Sarajevo-Centar",
+"post": "BH Pošta"
+},
+{
+"code": "71103",
+"place": "Sarajevo-Centar",
+"post": "BH Pošta"
+},
+{
+"code": "71104",
+"place": "Sarajevo-Centar",
+"post": "BH Pošta"
+},
+{
+"code": "71108",
+"place": "Sarajevo-Centar",
+"post": "BH Pošta"
+},
+{
+"code": "71120",
+"place": "Sarajevo-Novo Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71121",
+"place": "Sarajevo-Novo Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71122",
+"place": "Sarajevo-Novo Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71123",
+"place": "Istočno Sarajevo",
+"post": "Pošte Srpske"
+},
+{
+"code": "71123",
+"place": "Sarajevo-Novo Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71124",
+"place": "Sarajevo-Novo Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71125",
+"place": "Sarajevo-Novo Sarajevo",
+"post": "BH Pošta"
+},
+{
+"code": "71140",
+"place": "Sarajevo-Stari Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71141",
+"place": "Sarajevo-Stari Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71144",
+"place": "Hreša",
+"post": "Pošte Srpske"
+},
+{
+"code": "71145",
+"place": "Sarajevo-Stari Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71160",
+"place": "Sarajevo-Novi Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71162",
+"place": "Sarajevo-Novi Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71165",
+"place": "Sarajevo-Novi Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71166",
+"place": "Sarajevo-Novi Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71167",
+"place": "Sarajevo-Novi Grad",
+"post": "BH Pošta"
+},
+{
+"code": "71210",
+"place": "Ilidža",
+"post": "BH Pošta"
+},
+{
+"code": "71213",
+"place": "Kasindo",
+"post": "Pošte Srpske"
+},
+{
+"code": "71215",
+"place": "Blažuj",
+"post": "BH Pošta"
+},
+{
+"code": "71217",
+"place": "Rakovica",
+"post": "BH Pošta"
+},
+{
+"code": "71220",
+"place": "Trnovo",
+"post": "Pošte Srpske"
+},
+{
+"code": "71223",
+"place": "Delijaš",
+"post": "BH Pošta"
+},
+{
+"code": "71230",
+"place": "Kalinovik",
+"post": "Pošte Srpske"
+},
+{
+"code": "71240",
+"place": "Hadžići",
+"post": "BH Pošta"
+},
+{
+"code": "71243",
+"place": "Pazarić",
+"post": "BH Pošta"
+},
+{
+"code": "71244",
+"place": "Tarčin",
+"post": "BH Pošta"
+},
+{
+"code": "71250",
+"place": "Kiseljak",
+"post": "HP Mostar"
+},
+{
+"code": "71253",
+"place": "Bilalovac",
+"post": "BH Pošta"
+},
+{
+"code": "71254",
+"place": "Lepenica",
+"post": "HP Mostar"
+},
+{
+"code": "71255",
+"place": "Brestovsko",
+"post": "HP Mostar"
+},
+{
+"code": "71260",
+"place": "Kreševo",
+"post": "HP Mostar"
+},
+{
+"code": "71270",
+"place": "Fojnica",
+"post": "BH Pošta"
+},
+{
+"code": "71275",
+"place": "Gojevići",
+"post": "HP Mostar"
+},
+{
+"code": "71300",
+"place": "Visoko",
+"post": "BH Pošta"
+},
+{
+"code": "71305",
+"place": "Donje Moštre",
+"post": "BH Pošta"
+},
+{
+"code": "71320",
+"place": "Vogošća",
+"post": "BH Pošta"
+},
+{
+"code": "71321",
+"place": "Semizovac",
+"post": "BH Pošta"
+},
+{
+"code": "71330",
+"place": "Vareš",
+"post": "BH Pošta"
+},
+{
+"code": "71333",
+"place": "Vareš Majdan",
+"post": "BH Pošta"
+},
+{
+"code": "71335",
+"place": "Pržići",
+"post": "HP Mostar"
+},
+{
+"code": "71340",
+"place": "Olovo",
+"post": "BH Pošta"
+},
+{
+"code": "71347",
+"place": "Careva Ćuprija",
+"post": "BH Pošta"
+},
+{
+"code": "71350",
+"place": "Sokolac",
+"post": "Pošte Srpske"
+},
+{
+"code": "71355",
+"place": "Kaljina",
+"post": "Pošte Srpske"
+},
+{
+"code": "71356",
+"place": "Knežina",
+"post": "Pošte Srpske"
+},
+{
+"code": "71357",
+"place": "Sokolovići",
+"post": "Pošte Srpske"
+},
+{
+"code": "71360",
+"place": "Han Pijesak",
+"post": "Pošte Srpske"
+},
+{
+"code": "71370",
+"place": "Breza",
+"post": "BH Pošta"
+},
+{
+"code": "71373",
+"place": "Župča",
+"post": "BH Pošta"
+},
+{
+"code": "71380",
+"place": "Ilijaš",
+"post": "BH Pošta"
+},
+{
+"code": "71383",
+"place": "Nišići",
+"post": "BH Pošta"
+},
+{
+"code": "71385",
+"place": "Srednje (Ilijaš)",
+"post": "BH Pošta"
+},
+{
+"code": "71387",
+"place": "Podlugovi",
+"post": "BH Pošta"
+},
+{
+"code": "71420",
+"place": "Pale",
+"post": "Pošte Srpske"
+},
+{
+"code": "71425",
+"place": "Podgrab",
+"post": "Pošte Srpske"
+},
+{
+"code": "71428",
+"place": "Mokro",
+"post": "Pošte Srpske"
+},
+{
+"code": "72101",
+"place": "Zenica",
+"post": "BH Pošta"
+},
+{
+"code": "72102",
+"place": "Zenica",
+"post": "BH Pošta"
+},
+{
+"code": "72112",
+"place": "Zenica",
+"post": "BH Pošta"
+},
+{
+"code": "72207",
+"place": "Puhovac",
+"post": "BH Pošta"
+},
+{
+"code": "72209",
+"place": "Stranjani",
+"post": "BH Pošta"
+},
+{
+"code": "72212",
+"place": "Nemila",
+"post": "BH Pošta"
+},
+{
+"code": "72213",
+"place": "Topčić Polje",
+"post": "BH Pošta"
+},
+{
+"code": "72215",
+"place": "Janjići",
+"post": "BH Pošta"
+},
+{
+"code": "72220",
+"place": "Zavidovići",
+"post": "BH Pošta"
+},
+{
+"code": "72224",
+"place": "Čardak",
+"post": "BH Pošta"
+},
+{
+"code": "72225",
+"place": "Hajderovići",
+"post": "BH Pošta"
+},
+{
+"code": "72226",
+"place": "Kovači (Zavidovići)",
+"post": "BH Pošta"
+},
+{
+"code": "72227",
+"place": "Vozuća",
+"post": "BH Pošta"
+},
+{
+"code": "72230",
+"place": "Žepče",
+"post": "HP Mostar"
+},
+{
+"code": "72233",
+"place": "Begov Han",
+"post": "BH Pošta"
+},
+{
+"code": "72236",
+"place": "Željezno Polje",
+"post": "BH Pošta"
+},
+{
+"code": "72238",
+"place": "Ozimica",
+"post": "HP Mostar"
+},
+{
+"code": "72240",
+"place": "Kakanj",
+"post": "BH Pošta"
+},
+{
+"code": "72243",
+"place": "Brnjic",
+"post": "BH Pošta"
+},
+{
+"code": "72244",
+"place": "Kraljeva Sutjeska",
+"post": "BH Pošta"
+},
+{
+"code": "72245",
+"place": "Haljinići",
+"post": "BH Pošta"
+},
+{
+"code": "72246",
+"place": "Čatići",
+"post": "BH Pošta"
+},
+{
+"code": "72248",
+"place": "Bilješevo",
+"post": "BH Pošta"
+},
+{
+"code": "72250",
+"place": "Vitez",
+"post": "HP Mostar"
+},
+{
+"code": "72251",
+"place": "Stari Vitez",
+"post": "BH Pošta"
+},
+{
+"code": "72252",
+"place": "Počulica",
+"post": "BH Pošta"
+},
+{
+"code": "72256",
+"place": "Bila",
+"post": "HP Mostar"
+},
+{
+"code": "72260",
+"place": "Busovača",
+"post": "HP Mostar"
+},
+{
+"code": "72264",
+"place": "Kaćuni",
+"post": "BH Pošta"
+},
+{
+"code": "72265",
+"place": "Kaonik",
+"post": "BH Pošta"
+},
+{
+"code": "72270",
+"place": "Travnik",
+"post": "BH Pošta"
+},
+{
+"code": "72276",
+"place": "Nova Bila",
+"post": "HP Mostar"
+},
+{
+"code": "72277",
+"place": "Guča Gora",
+"post": "BH Pošta"
+},
+{
+"code": "72278",
+"place": "Dolac na Lašvi",
+"post": "BH Pošta"
+},
+{
+"code": "72281",
+"place": "Han Bila",
+"post": "BH Pošta"
+},
+{
+"code": "72282",
+"place": "Mehurići",
+"post": "BH Pošta"
+},
+{
+"code": "72283",
+"place": "Turbe",
+"post": "BH Pošta"
+},
+{
+"code": "72284",
+"place": "Karaula",
+"post": "BH Pošta"
+},
+{
+"code": "72286",
+"place": "Babanovac",
+"post": "BH Pošta"
+},
+{
+"code": "72290",
+"place": "Novi Travnik",
+"post": "BH Pošta"
+},
+{
+"code": "72293",
+"place": "Bučići",
+"post": "HP Mostar"
+},
+{
+"code": "73101",
+"place": "Goražde",
+"post": "BH Pošta"
+},
+{
+"code": "73110",
+"place": "Novo Goražde",
+"post": "Pošte Srpske"
+},
+{
+"code": "73205",
+"place": "Vitkovići",
+"post": "BH Pošta"
+},
+{
+"code": "73206",
+"place": "Mravinjac",
+"post": "BH Pošta"
+},
+{
+"code": "73208",
+"place": "Ilovača",
+"post": "BH Pošta"
+},
+{
+"code": "73220",
+"place": "Rogatica",
+"post": "Pošte Srpske"
+},
+{
+"code": "73223",
+"place": "Stjenice",
+"post": "Pošte Srpske"
+},
+{
+"code": "73225",
+"place": "Borike",
+"post": "Pošte Srpske"
+},
+{
+"code": "73240",
+"place": "Višegrad",
+"post": "Pošte Srpske"
+},
+{
+"code": "73245",
+"place": "Prelovo",
+"post": "Pošte Srpske"
+},
+{
+"code": "73247",
+"place": "Dobrun",
+"post": "Pošte Srpske"
+},
+{
+"code": "73249",
+"place": "Vardište",
+"post": "Pošte Srpske"
+},
+{
+"code": "73250",
+"place": "Ustikolina",
+"post": "BH Pošta"
+},
+{
+"code": "73260",
+"place": "Rudo",
+"post": "Pošte Srpske"
+},
+{
+"code": "73263",
+"place": "Bijelo Brdo",
+"post": "Pošte Srpske"
+},
+{
+"code": "73265",
+"place": "Uvac",
+"post": "Pošte Srpske"
+},
+{
+"code": "73280",
+"place": "Čajniče",
+"post": "Pošte Srpske"
+},
+{
+"code": "73283",
+"place": "Miljeno",
+"post": "Pošte Srpske"
+},
+{
+"code": "73287",
+"place": "Zaborak",
+"post": "Pošte Srpske"
+},
+{
+"code": "73290",
+"place": "Prača",
+"post": "BH Pošta"
+},
+{
+"code": "73302",
+"place": "Foča",
+"post": "Pošte Srpske"
+},
+{
+"code": "73305",
+"place": "Zavajt",
+"post": "Pošte Srpske"
+},
+{
+"code": "73307",
+"place": "Čelebići",
+"post": "Pošte Srpske"
+},
+{
+"code": "73309",
+"place": "Brod",
+"post": "Pošte Srpske"
+},
+{
+"code": "73311",
+"place": "Tjentište",
+"post": "Pošte Srpske"
+},
+{
+"code": "73313",
+"place": "Miljevina",
+"post": "Pošte Srpske"
+},
+{
+"code": "74101",
+"place": "Doboj",
+"post": "Pošte Srpske"
+},
+{
+"code": "74203",
+"place": "Matuzići",
+"post": "BH Pošta"
+},
+{
+"code": "74206",
+"place": "Brijesnica",
+"post": "BH Pošta"
+},
+{
+"code": "74207",
+"place": "Klokotnica",
+"post": "BH Pošta"
+},
+{
+"code": "74208",
+"place": "Stanari",
+"post": "Pošte Srpske"
+},
+{
+"code": "74209",
+"place": "Dragalovci",
+"post": "Pošte Srpske"
+},
+{
+"code": "74210",
+"place": "Brestovo",
+"post": "Pošte Srpske"
+},
+{
+"code": "74212",
+"place": "Sjenina",
+"post": "Pošte Srpske"
+},
+{
+"code": "74213",
+"place": "Velika Bukovica",
+"post": "Pošte Srpske"
+},
+{
+"code": "74214",
+"place": "Prnjavor Mali",
+"post": "Pošte Srpske"
+},
+{
+"code": "74215",
+"place": "Kotorsko",
+"post": "Pošte Srpske"
+},
+{
+"code": "74216",
+"place": "Majevac",
+"post": "Pošte Srpske"
+},
+{
+"code": "74217",
+"place": "Podnovlje",
+"post": "Pošte Srpske"
+},
+{
+"code": "74219",
+"place": "Grabovica (RS 74219)",
+"post": "Pošte Srpske"
+},
+{
+"code": "74221",
+"place": "Suho Polje",
+"post": "Pošte Srpske"
+},
+{
+"code": "74222",
+"place": "Kostajnica (Doboj)",
+"post": "Pošte Srpske"
+},
+{
+"code": "74225",
+"place": "Osječani",
+"post": "Pošte Srpske"
+},
+{
+"code": "74230",
+"place": "Usora-Žabljak",
+"post": "HP Mostar"
+},
+{
+"code": "74250",
+"place": "Maglaj",
+"post": "BH Pošta"
+},
+{
+"code": "74253",
+"place": "Kosova",
+"post": "BH Pošta"
+},
+{
+"code": "74254",
+"place": "Novi Šeher",
+"post": "BH Pošta"
+},
+{
+"code": "74255",
+"place": "Paklenica",
+"post": "Pošte Srpske"
+},
+{
+"code": "74258",
+"place": "Globarica",
+"post": "HP Mostar"
+},
+{
+"code": "74260",
+"place": "Tešanj",
+"post": "BH Pošta"
+},
+{
+"code": "74261",
+"place": "Skugrić",
+"post": "Pošte Srpske"
+},
+{
+"code": "74264",
+"place": "Jelah",
+"post": "BH Pošta"
+},
+{
+"code": "74265",
+"place": "Vitkovci Donji",
+"post": "Pošte Srpske"
+},
+{
+"code": "74266",
+"place": "Tešanjka",
+"post": "BH Pošta"
+},
+{
+"code": "74270",
+"place": "Teslić",
+"post": "Pošte Srpske"
+},
+{
+"code": "74272",
+"place": "Gornji Teslić",
+"post": "Pošte Srpske"
+},
+{
+"code": "74274",
+"place": "Čečava",
+"post": "Pošte Srpske"
+},
+{
+"code": "74275",
+"place": "Blatnica",
+"post": "Pošte Srpske"
+},
+{
+"code": "74276",
+"place": "Pribinić",
+"post": "Pošte Srpske"
+},
+{
+"code": "74277",
+"place": "Buletić",
+"post": "Pošte Srpske"
+},
+{
+"code": "74278",
+"place": "Ugodnovići",
+"post": "Pošte Srpske"
+},
+{
+"code": "74279",
+"place": "Šnjegotina Gornja",
+"post": "Pošte Srpske"
+},
+{
+"code": "74317",
+"place": "Petrovo",
+"post": "Pošte Srpske"
+},
+{
+"code": "74321",
+"place": "Usora-Sivša",
+"post": "HP Mostar"
+},
+{
+"code": "74322",
+"place": "Boljanić",
+"post": "Pošte Srpske"
+},
+{
+"code": "74323",
+"place": "Sočkovac",
+"post": "Pošte Srpske"
+},
+{
+"code": "74400",
+"place": "Derventa",
+"post": "Pošte Srpske"
+},
+{
+"code": "74412",
+"place": "Osinja",
+"post": "Pošte Srpske"
+},
+{
+"code": "74413",
+"place": "Kalenderovci",
+"post": "Pošte Srpske"
+},
+{
+"code": "74418",
+"place": "Mala Sočanica",
+"post": "Pošte Srpske"
+},
+{
+"code": "74450",
+"place": "Brod",
+"post": "Pošte Srpske"
+},
+{
+"code": "74451",
+"place": "Zborište",
+"post": "Pošte Srpske"
+},
+{
+"code": "74455",
+"place": "Vinska",
+"post": "Pošte Srpske"
+},
+{
+"code": "74470",
+"place": "Vukosavlje",
+"post": "Pošte Srpske"
+},
+{
+"code": "74480",
+"place": "Modriča",
+"post": "Pošte Srpske"
+},
+{
+"code": "74483",
+"place": "Dugo Polje",
+"post": "Pošte Srpske"
+},
+{
+"code": "74484",
+"place": "Garevac",
+"post": "Pošte Srpske"
+},
+{
+"code": "74485",
+"place": "Miloševac",
+"post": "Pošte Srpske"
+},
+{
+"code": "74487",
+"place": "Vranjak 7",
+"post": "Pošte Srpske"
+},
+{
+"code": "74488",
+"place": "Vranjak 8",
+"post": "Pošte Srpske"
+},
+{
+"code": "74489",
+"place": "Koprivna",
+"post": "Pošte Srpske"
+},
+{
+"code": "75000",
+"place": "Tuzla",
+"post": "BH Pošta"
+},
+{
+"code": "75203",
+"place": "Bukinje",
+"post": "BH Pošta"
+},
+{
+"code": "75207",
+"place": "Simin Han",
+"post": "BH Pošta"
+},
+{
+"code": "75208",
+"place": "Gornja Tuzla",
+"post": "BH Pošta"
+},
+{
+"code": "75211",
+"place": "Kiseljak kod Tuzle",
+"post": "BH Pošta"
+},
+{
+"code": "75212",
+"place": "Mramor",
+"post": "BH Pošta"
+},
+{
+"code": "75213",
+"place": "Lipnica",
+"post": "BH Pošta"
+},
+{
+"code": "75214",
+"place": "Ljubače",
+"post": "BH Pošta"
+},
+{
+"code": "75216",
+"place": "Husino",
+"post": "BH Pošta"
+},
+{
+"code": "75240",
+"place": "Lopare",
+"post": "Pošte Srpske"
+},
+{
+"code": "75245",
+"place": "Šibošnica",
+"post": "BH Pošta"
+},
+{
+"code": "75246",
+"place": "Čelić",
+"post": "BH Pošta"
+},
+{
+"code": "75247",
+"place": "Koraj",
+"post": "Pošte Srpske"
+},
+{
+"code": "75248",
+"place": "Piperi",
+"post": "Pošte Srpske"
+},
+{
+"code": "75249",
+"place": "Priboj",
+"post": "Pošte Srpske"
+},
+{
+"code": "75260",
+"place": "Kalesija",
+"post": "BH Pošta"
+},
+{
+"code": "75265",
+"place": "Tojšići",
+"post": "BH Pošta"
+},
+{
+"code": "75268",
+"place": "Rainci Gornji",
+"post": "BH Pošta"
+},
+{
+"code": "75270",
+"place": "Živinice",
+"post": "BH Pošta"
+},
+{
+"code": "75272",
+"place": "Đurđevik",
+"post": "BH Pošta"
+},
+{
+"code": "75273",
+"place": "Dubrave Gornje",
+"post": "BH Pošta"
+},
+{
+"code": "75274",
+"place": "Dubrave Donje",
+"post": "BH Pošta"
+},
+{
+"code": "75275",
+"place": "Šerići",
+"post": "BH Pošta"
+},
+{
+"code": "75276",
+"place": "Gračanica (Živinice)",
+"post": "BH Pošta"
+},
+{
+"code": "75280",
+"place": "Kladanj",
+"post": "BH Pošta"
+},
+{
+"code": "75283",
+"place": "Stupari",
+"post": "BH Pošta"
+},
+{
+"code": "75290",
+"place": "Banovići",
+"post": "BH Pošta"
+},
+{
+"code": "75300",
+"place": "Lukavac",
+"post": "BH Pošta"
+},
+{
+"code": "75303",
+"place": "Poljice",
+"post": "BH Pošta"
+},
+{
+"code": "75305",
+"place": "Puračić",
+"post": "BH Pošta"
+},
+{
+"code": "75306",
+"place": "Turija",
+"post": "BH Pošta"
+},
+{
+"code": "75308",
+"place": "Duboštica",
+"post": "BH Pošta"
+},
+{
+"code": "75320",
+"place": "Gračanica",
+"post": "BH Pošta"
+},
+{
+"code": "75323",
+"place": "Orahovica Donja",
+"post": "BH Pošta"
+},
+{
+"code": "75324",
+"place": "Stjepan Polje",
+"post": "BH Pošta"
+},
+{
+"code": "75326",
+"place": "Malešići",
+"post": "BH Pošta"
+},
+{
+"code": "75327",
+"place": "Lukavica",
+"post": "BH Pošta"
+},
+{
+"code": "75328",
+"place": "Doborovci",
+"post": "BH Pošta"
+},
+{
+"code": "75329",
+"place": "Miričina",
+"post": "BH Pošta"
+},
+{
+"code": "75350",
+"place": "Srebrenik",
+"post": "BH Pošta"
+},
+{
+"code": "75353",
+"place": "Sladna",
+"post": "BH Pošta"
+},
+{
+"code": "75355",
+"place": "Podorašje",
+"post": "BH Pošta"
+},
+{
+"code": "75356",
+"place": "Špionica",
+"post": "BH Pošta"
+},
+{
+"code": "75357",
+"place": "Tinja",
+"post": "BH Pošta"
+},
+{
+"code": "75358",
+"place": "Duboki Potok",
+"post": "BH Pošta"
+},
+{
+"code": "75400",
+"place": "Zvornik",
+"post": "Pošte Srpske"
+},
+{
+"code": "75404",
+"place": "Gušteri",
+"post": "Pošte Srpske"
+},
+{
+"code": "75405",
+"place": "Caparde",
+"post": "Pošte Srpske"
+},
+{
+"code": "75406",
+"place": "Osmaci",
+"post": "Pošte Srpske"
+},
+{
+"code": "75410",
+"place": "Drinjača (Zvornik)",
+"post": "Pošte Srpske"
+},
+{
+"code": "75411",
+"place": "Sapna",
+"post": "BH Pošta"
+},
+{
+"code": "75412",
+"place": "Pilica",
+"post": "Pošte Srpske"
+},
+{
+"code": "75413",
+"place": "Kozluk",
+"post": "Pošte Srpske"
+},
+{
+"code": "75414",
+"place": "Teočak",
+"post": "BH Pošta"
+},
+{
+"code": "75420",
+"place": "Bratunac",
+"post": "Pošte Srpske"
+},
+{
+"code": "75423",
+"place": "Fakovići",
+"post": "Pošte Srpske"
+},
+{
+"code": "75430",
+"place": "Srebrenica",
+"post": "Pošte Srpske"
+},
+{
+"code": "75433",
+"place": "Potočari",
+"post": "Pošte Srpske"
+},
+{
+"code": "75436",
+"place": "Skelani",
+"post": "Pošte Srpske"
+},
+{
+"code": "75440",
+"place": "Vlasenica",
+"post": "Pošte Srpske"
+},
+{
+"code": "75444",
+"place": "Derventa",
+"post": "Pošte Srpske"
+},
+{
+"code": "75445",
+"place": "Nova Kasaba",
+"post": "Pošte Srpske"
+},
+{
+"code": "75446",
+"place": "Milići",
+"post": "Pošte Srpske"
+},
+{
+"code": "75450",
+"place": "Šekovići",
+"post": "Pošte Srpske"
+},
+{
+"code": "75453",
+"place": "Papraća",
+"post": "Pošte Srpske"
+},
+{
+"code": "75455",
+"place": "Tišća",
+"post": "Pošte Srpske"
+},
+{
+"code": "76100",
+"place": "Brčko",
+"post": "Pošte Srpske"
+},
+{
+"code": "76101",
+"place": "Brčko",
+"post": "Pošte Srpske"
+},
+{
+"code": "76120",
+"place": "Brčko",
+"post": "BH Pošta"
+},
+{
+"code": "76204",
+"place": "Bijela",
+"post": "HP Mostar"
+},
+{
+"code": "76205",
+"place": "Seonjaci",
+"post": "HP Mostar"
+},
+{
+"code": "76206",
+"place": "Brka",
+"post": "BH Pošta"
+},
+{
+"code": "76207",
+"place": "Gornji Rahić",
+"post": "BH Pošta"
+},
+{
+"code": "76208",
+"place": "Maoča",
+"post": "BH Pošta"
+},
+{
+"code": "76209",
+"place": "Šatorovići",
+"post": "BH Pošta"
+},
+{
+"code": "76210",
+"place": "Boće",
+"post": "HP Mostar"
+},
+{
+"code": "76212",
+"place": "Krepšić",
+"post": "Pošte Srpske"
+},
+{
+"code": "76214",
+"place": "Zovik Gornji",
+"post": "HP Mostar"
+},
+{
+"code": "76216",
+"place": "Brezovo Polje",
+"post": "Pošte Srpske"
+},
+{
+"code": "76218",
+"place": "Ražljevo",
+"post": "Pošte Srpske"
+},
+{
+"code": "76230",
+"place": "Šamac",
+"post": "Pošte Srpske"
+},
+{
+"code": "76231",
+"place": "Domaljevac-Granični",
+"post": "HP Mostar"
+},
+{
+"code": "76233",
+"place": "Domaljevac",
+"post": "HP Mostar"
+},
+{
+"code": "76234",
+"place": "Grebnice",
+"post": "HP Mostar"
+},
+{
+"code": "76235",
+"place": "Obudovac",
+"post": "Pošte Srpske"
+},
+{
+"code": "76236",
+"place": "Kornica",
+"post": "Pošte Srpske"
+},
+{
+"code": "76237",
+"place": "Donja Slatina",
+"post": "Pošte Srpske"
+},
+{
+"code": "76238",
+"place": "Gornja Slatina",
+"post": "Pošte Srpske"
+},
+{
+"code": "76239",
+"place": "Crkvina",
+"post": "Pošte Srpske"
+},
+{
+"code": "76250",
+"place": "Gradačac",
+"post": "BH Pošta"
+},
+{
+"code": "76254",
+"place": "Vučkovci",
+"post": "BH Pošta"
+},
+{
+"code": "76256",
+"place": "Pelagićevo",
+"post": "Pošte Srpske"
+},
+{
+"code": "76257",
+"place": "Donja Međiđa",
+"post": "BH Pošta"
+},
+{
+"code": "76259",
+"place": "Zelinja",
+"post": "BH Pošta"
+},
+{
+"code": "76270",
+"place": "Orašje",
+"post": "HP Mostar"
+},
+{
+"code": "76271",
+"place": "Matići",
+"post": "HP Mostar"
+},
+{
+"code": "76272",
+"place": "Tolisa",
+"post": "HP Mostar"
+},
+{
+"code": "76273",
+"place": "Donji Žabar",
+"post": "Pošte Srpske"
+},
+{
+"code": "76274",
+"place": "Donja Mahala",
+"post": "HP Mostar"
+},
+{
+"code": "76275",
+"place": "Vidovice",
+"post": "HP Mostar"
+},
+{
+"code": "76276",
+"place": "Kostrč",
+"post": "HP Mostar"
+},
+{
+"code": "76277",
+"place": "Bok",
+"post": "HP Mostar"
+},
+{
+"code": "76278",
+"place": "Lončari",
+"post": "Pošte Srpske"
+},
+{
+"code": "76279",
+"place": "Oštra Luka",
+"post": "HP Mostar"
+},
+{
+"code": "76281",
+"place": "Orašje-Granični",
+"post": "HP Mostar"
+},
+{
+"code": "76290",
+"place": "Odžak",
+"post": "HP Mostar"
+},
+{
+"code": "76292",
+"place": "Prud",
+"post": "HP Mostar"
+},
+{
+"code": "76296",
+"place": "Gornja Dubica",
+"post": "HP Mostar"
+},
+{
+"code": "76297",
+"place": "Donji Svilaj",
+"post": "HP Mostar"
+},
+{
+"code": "76300",
+"place": "Bijeljina",
+"post": "Pošte Srpske"
+},
+{
+"code": "76310",
+"place": "Trnjaci",
+"post": "Pošte Srpske"
+},
+{
+"code": "76311",
+"place": "Dvorovi",
+"post": "Pošte Srpske"
+},
+{
+"code": "76312",
+"place": "Batković",
+"post": "Pošte Srpske"
+},
+{
+"code": "76313",
+"place": "Brodac",
+"post": "Pošte Srpske"
+},
+{
+"code": "76315",
+"place": "Patkovača",
+"post": "Pošte Srpske"
+},
+{
+"code": "76316",
+"place": "Janja",
+"post": "Pošte Srpske"
+},
+{
+"code": "76318",
+"place": "Glavičice",
+"post": "Pošte Srpske"
+},
+{
+"code": "76321",
+"place": "Suho Polje",
+"post": "Pošte Srpske"
+},
+{
+"code": "76323",
+"place": "Dragaljevac",
+"post": "Pošte Srpske"
+},
+{
+"code": "76325",
+"place": "Vršani (Bijeljina)",
+"post": "Pošte Srpske"
+},
+{
+"code": "76328",
+"place": "Crnjelovo",
+"post": "Pošte Srpske"
+},
+{
+"code": "76329",
+"place": "Velika Obarska",
+"post": "Pošte Srpske"
+},
+{
+"code": "76330",
+"place": "Ugljevik",
+"post": "Pošte Srpske"
+},
+{
+"code": "76333",
+"place": "Zabrđe",
+"post": "Pošte Srpske"
+},
+{
+"code": "76335",
+"place": "Trnova Donja",
+"post": "Pošte Srpske"
+},
+{
+"code": "77000",
+"place": "Bihać",
+"post": "BH Pošta"
+},
+{
+"code": "77203",
+"place": "Vrsta",
+"post": "BH Pošta"
+},
+{
+"code": "77204",
+"place": "Kamenica",
+"post": "BH Pošta"
+},
+{
+"code": "77205",
+"place": "Brekovica",
+"post": "BH Pošta"
+},
+{
+"code": "77206",
+"place": "Kulen Vakuf",
+"post": "BH Pošta"
+},
+{
+"code": "77207",
+"place": "Velika Gata",
+"post": "BH Pošta"
+},
+{
+"code": "77208",
+"place": "Izačić",
+"post": "BH Pošta"
+},
+{
+"code": "77209",
+"place": "Pokoj",
+"post": "BH Pošta"
+},
+{
+"code": "77215",
+"place": "Ripač",
+"post": "BH Pošta"
+},
+{
+"code": "77220",
+"place": "Cazin",
+"post": "BH Pošta"
+},
+{
+"code": "77222",
+"place": "Gornja Koprivna",
+"post": "BH Pošta"
+},
+{
+"code": "77223",
+"place": "Šturlić",
+"post": "BH Pošta"
+},
+{
+"code": "77224",
+"place": "Stijena",
+"post": "BH Pošta"
+},
+{
+"code": "77225",
+"place": "Tržačka Raštela",
+"post": "BH Pošta"
+},
+{
+"code": "77226",
+"place": "Ćoralići",
+"post": "BH Pošta"
+},
+{
+"code": "77227",
+"place": "Pećigrad",
+"post": "BH Pošta"
+},
+{
+"code": "77228",
+"place": "Ostrožac",
+"post": "BH Pošta"
+},
+{
+"code": "77230",
+"place": "Velika Kladuša",
+"post": "BH Pošta"
+},
+{
+"code": "77231",
+"place": "Vrnograč",
+"post": "BH Pošta"
+},
+{
+"code": "77232",
+"place": "Podzvizd",
+"post": "BH Pošta"
+},
+{
+"code": "77233",
+"place": "Todorovo",
+"post": "BH Pošta"
+},
+{
+"code": "77234",
+"place": "Šumatac",
+"post": "BH Pošta"
+},
+{
+"code": "77235",
+"place": "Mala Kladuša",
+"post": "BH Pošta"
+},
+{
+"code": "77236",
+"place": "Zborište",
+"post": "BH Pošta"
+},
+{
+"code": "77240",
+"place": "Bosanska Krupa",
+"post": "BH Pošta"
+},
+{
+"code": "77241",
+"place": "Jezerski",
+"post": "BH Pošta"
+},
+{
+"code": "77243",
+"place": "Varoška Rijeka",
+"post": "BH Pošta"
+},
+{
+"code": "77244",
+"place": "Otoka",
+"post": "BH Pošta"
+},
+{
+"code": "77245",
+"place": "Bužim",
+"post": "BH Pošta"
+},
+{
+"code": "77249",
+"place": "Konjodor",
+"post": "BH Pošta"
+},
+{
+"code": "77250",
+"place": "Bosanski Petrovac",
+"post": "BH Pošta"
+},
+{
+"code": "77253",
+"place": "Krnjeuša",
+"post": "BH Pošta"
+},
+{
+"code": "78000",
+"place": "Banja Luka",
+"post": "Pošte Srpske"
+},
+{
+"code": "78103",
+"place": "Banja Luka",
+"post": "Pošte Srpske"
+},
+{
+"code": "78108",
+"place": "Banja Luka",
+"post": "Pošte Srpske"
+},
+{
+"code": "78114",
+"place": "Banja Luka",
+"post": "Pošte Srpske"
+},
+{
+"code": "78202",
+"place": "Saračica",
+"post": "Pošte Srpske"
+},
+{
+"code": "78203",
+"place": "Goleši",
+"post": "Pošte Srpske"
+},
+{
+"code": "78204",
+"place": "Bronzani Majdan",
+"post": "Pošte Srpske"
+},
+{
+"code": "78206",
+"place": "Krupa na Vrbasu",
+"post": "Pošte Srpske"
+},
+{
+"code": "78207",
+"place": "Kola",
+"post": "Pošte Srpske"
+},
+{
+"code": "78208",
+"place": "Stričići",
+"post": "Pošte Srpske"
+},
+{
+"code": "78211",
+"place": "Vrbanja",
+"post": "Pošte Srpske"
+},
+{
+"code": "78212",
+"place": "Kuljani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78214",
+"place": "Zalužani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78215",
+"place": "Dragočaj",
+"post": "Pošte Srpske"
+},
+{
+"code": "78216",
+"place": "Potkozarje",
+"post": "Pošte Srpske"
+},
+{
+"code": "78217",
+"place": "Piskavica",
+"post": "Pošte Srpske"
+},
+{
+"code": "78220",
+"place": "Kotor Varoš",
+"post": "Pošte Srpske"
+},
+{
+"code": "78223",
+"place": "Maslovare",
+"post": "Pošte Srpske"
+},
+{
+"code": "78224",
+"place": "Šiprage",
+"post": "Pošte Srpske"
+},
+{
+"code": "78225",
+"place": "Vrbanjci",
+"post": "Pošte Srpske"
+},
+{
+"code": "78227",
+"place": "Grabovica (RS 78227)",
+"post": "Pošte Srpske"
+},
+{
+"code": "78230",
+"place": "Kneževo",
+"post": "Pošte Srpske"
+},
+{
+"code": "78233",
+"place": "Javorani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78234",
+"place": "Imljani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78240",
+"place": "Čelinac",
+"post": "Pošte Srpske"
+},
+{
+"code": "78243",
+"place": "Stara Dubrava",
+"post": "Pošte Srpske"
+},
+{
+"code": "78244",
+"place": "Jošavka",
+"post": "Pošte Srpske"
+},
+{
+"code": "78250",
+"place": "Laktaši",
+"post": "Pošte Srpske"
+},
+{
+"code": "78252",
+"place": "Trn",
+"post": "Pošte Srpske"
+},
+{
+"code": "78253",
+"place": "Slatina Ilidža",
+"post": "Pošte Srpske"
+},
+{
+"code": "78255",
+"place": "Aleksandrovac",
+"post": "Pošte Srpske"
+},
+{
+"code": "78256",
+"place": "Kriškovci",
+"post": "Pošte Srpske"
+},
+{
+"code": "78400",
+"place": "Gradiška",
+"post": "Pošte Srpske"
+},
+{
+"code": "78404",
+"place": "Turjak",
+"post": "Pošte Srpske"
+},
+{
+"code": "78405",
+"place": "Gornji Podgradci",
+"post": "Pošte Srpske"
+},
+{
+"code": "78406",
+"place": "Orahova",
+"post": "Pošte Srpske"
+},
+{
+"code": "78407",
+"place": "Laminci Sređani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78408",
+"place": "Vrbaška",
+"post": "Pošte Srpske"
+},
+{
+"code": "78410",
+"place": "Mašići",
+"post": "Pošte Srpske"
+},
+{
+"code": "78411",
+"place": "Dubrave",
+"post": "Pošte Srpske"
+},
+{
+"code": "78418",
+"place": "Nova Topola",
+"post": "Pošte Srpske"
+},
+{
+"code": "78420",
+"place": "Srbac",
+"post": "Pošte Srpske"
+},
+{
+"code": "78422",
+"place": "Sitneši",
+"post": "Pošte Srpske"
+},
+{
+"code": "78423",
+"place": "Kobaš",
+"post": "Pošte Srpske"
+},
+{
+"code": "78424",
+"place": "Kukulje",
+"post": "Pošte Srpske"
+},
+{
+"code": "78427",
+"place": "Ćukali",
+"post": "Pošte Srpske"
+},
+{
+"code": "78428",
+"place": "Nožičko",
+"post": "Pošte Srpske"
+},
+{
+"code": "78430",
+"place": "Prnjavor",
+"post": "Pošte Srpske"
+},
+{
+"code": "78432",
+"place": "Donji Vijačani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78433",
+"place": "Šibovska",
+"post": "Pošte Srpske"
+},
+{
+"code": "78434",
+"place": "Naseobina Lišnja",
+"post": "Pošte Srpske"
+},
+{
+"code": "78435",
+"place": "Potočani, Doboj",
+"post": "Pošte Srpske"
+},
+{
+"code": "78436",
+"place": "Hrvaćani",
+"post": "Pošte Srpske"
+},
+{
+"code": "78438",
+"place": "Gornji Smrtići",
+"post": "Pošte Srpske"
+},
+{
+"code": "78439",
+"place": "Gornji Štrpci",
+"post": "Pošte Srpske"
+},
+{
+"code": "78443",
+"place": "Kulaši",
+"post": "Pošte Srpske"
+},
+{
+"code": "79102",
+"place": "Prijedor",
+"post": "Pošte Srpske"
+},
+{
+"code": "79202",
+"place": "Kozarac",
+"post": "Pošte Srpske"
+},
+{
+"code": "79203",
+"place": "Omarska",
+"post": "Pošte Srpske"
+},
+{
+"code": "79204",
+"place": "Lamovita",
+"post": "Pošte Srpske"
+},
+{
+"code": "79206",
+"place": "Ljubija",
+"post": "Pošte Srpske"
+},
+{
+"code": "79208",
+"place": "Brezičani",
+"post": "Pošte Srpske"
+},
+{
+"code": "79220",
+"place": "Novi Grad (Bosanski Novi)",
+"post": "Pošte Srpske"
+},
+{
+"code": "79223",
+"place": "Dobrljin",
+"post": "Pošte Srpske"
+},
+{
+"code": "79224",
+"place": "Kostajnica",
+"post": "Pošte Srpske"
+},
+{
+"code": "79226",
+"place": "Rudice",
+"post": "Pošte Srpske"
+},
+{
+"code": "79227",
+"place": "Dubovik",
+"post": "Pošte Srpske"
+},
+{
+"code": "79228",
+"place": "Donji Agići",
+"post": "Pošte Srpske"
+},
+{
+"code": "79229",
+"place": "Svodna",
+"post": "Pošte Srpske"
+},
+{
+"code": "79240",
+"place": "Kozarska Dubica",
+"post": "Pošte Srpske"
+},
+{
+"code": "79243",
+"place": "Demirovac",
+"post": "Pošte Srpske"
+},
+{
+"code": "79244",
+"place": "Johova",
+"post": "Pošte Srpske"
+},
+{
+"code": "79246",
+"place": "Knežica",
+"post": "Pošte Srpske"
+},
+{
+"code": "79247",
+"place": "Međuvođe",
+"post": "Pošte Srpske"
+},
+{
+"code": "79249",
+"place": "Sreflije",
+"post": "Pošte Srpske"
+},
+{
+"code": "79260",
+"place": "Sanski Most",
+"post": "BH Pošta"
+},
+{
+"code": "79262",
+"place": "Vrhpolje",
+"post": "BH Pošta"
+},
+{
+"code": "79263",
+"place": "Oštra Luka",
+"post": "Pošte Srpske"
+},
+{
+"code": "79264",
+"place": "Fajtovci",
+"post": "BH Pošta"
+},
+{
+"code": "79266",
+"place": "Donji Kamengrad",
+"post": "BH Pošta"
+},
+{
+"code": "79267",
+"place": "Lušci Palanka",
+"post": "BH Pošta"
+},
+{
+"code": "79268",
+"place": "Stari Majdan",
+"post": "BH Pošta"
+},
+{
+"code": "79280",
+"place": "Ključ",
+"post": "BH Pošta"
+},
+{
+"code": "79283",
+"place": "Ribnik",
+"post": "Pošte Srpske"
+},
+{
+"code": "79283",
+"place": "Sitnica",
+"post": "Pošte Srpske"
+},
+{
+"code": "79284",
+"place": "Krasulje",
+"post": "BH Pošta"
+},
+{
+"code": "79285",
+"place": "Sanica Gornja",
+"post": "BH Pošta"
+},
+{
+"code": "79287",
+"place": "Previja",
+"post": "Pošte Srpske"
+},
+{
+"code": "79288",
+"place": "Gornji Ribnik",
+"post": "Pošte Srpske"
+},
+{
+"code": "79289",
+"place": "Donji Vrbljani",
+"post": "Pošte Srpske"
+},
+{
+"code": "79290",
+"place": "Drinić",
+"post": "Pošte Srpske"
+},
+{
+"code": "79293",
+"place": "Opara",
+"post": "BH Pošta"
+},
+{
+"code": "80101",
+"place": "Livno",
+"post": "HP Mostar"
+},
+{
+"code": "80202",
+"place": "Priluka",
+"post": "HP Mostar"
+},
+{
+"code": "80203",
+"place": "Lusnić",
+"post": "HP Mostar"
+},
+{
+"code": "80204",
+"place": "Lištani",
+"post": "HP Mostar"
+},
+{
+"code": "80205",
+"place": "Guber",
+"post": "HP Mostar"
+},
+{
+"code": "80206",
+"place": "Orguz",
+"post": "HP Mostar"
+},
+{
+"code": "80208",
+"place": "Vidoši",
+"post": "HP Mostar"
+},
+{
+"code": "80209",
+"place": "Podhum",
+"post": "HP Mostar"
+},
+{
+"code": "80230",
+"place": "Glamoč",
+"post": "HP Mostar"
+},
+{
+"code": "80240",
+"place": "Tomislavgrad",
+"post": "HP Mostar"
+},
+{
+"code": "80241",
+"place": "Tomislavgrad-Općina",
+"post": "HP Mostar"
+},
+{
+"code": "80243",
+"place": "Mesihovina",
+"post": "HP Mostar"
+},
+{
+"code": "80244",
+"place": "Kongora",
+"post": "HP Mostar"
+},
+{
+"code": "80245",
+"place": "Prisoje",
+"post": "HP Mostar"
+},
+{
+"code": "80246",
+"place": "Kazaginac",
+"post": "HP Mostar"
+},
+{
+"code": "80247",
+"place": "Roško Polje",
+"post": "HP Mostar"
+},
+{
+"code": "80249",
+"place": "Šujica",
+"post": "HP Mostar"
+},
+{
+"code": "80260",
+"place": "Drvar",
+"post": "HP Mostar"
+},
+{
+"code": "80270",
+"place": "Bosansko Grahovo",
+"post": "HP Mostar"
+},
+{
+"code": "80320",
+"place": "Kupres",
+"post": "HP Mostar"
+},
+{
+"code": "88000",
+"place": "Mostar",
+"post": "HP Mostar"
+},
+{
+"code": "88005",
+"place": "Mostar-Glavni telegraf",
+"post": "HP Mostar"
+},
+{
+"code": "88101",
+"place": "Mostar",
+"post": "HP Mostar"
+},
+{
+"code": "88103",
+"place": "Mostar",
+"post": "BH Pošta"
+},
+{
+"code": "88104",
+"place": "Mostar-Mehanizacija",
+"post": "BH Pošta"
+},
+{
+"code": "88105",
+"place": "Mostar-Avenija",
+"post": "HP Mostar"
+},
+{
+"code": "88106",
+"place": "Mostar-Rodoč",
+"post": "HP Mostar"
+},
+{
+"code": "88107",
+"place": "Mostar-Balinovac",
+"post": "HP Mostar"
+},
+{
+"code": "88108",
+"place": "Mostar-Cernica",
+"post": "BH Pošta"
+},
+{
+"code": "88109",
+"place": "Mostar-Cim",
+"post": "HP Mostar"
+},
+{
+"code": "88110",
+"place": "Mostar",
+"post": "BH Pošta"
+},
+{
+"code": "88113",
+"place": "Vrapčići",
+"post": "BH Pošta"
+},
+{
+"code": "88121",
+"place": "Mostar-MUP",
+"post": "HP Mostar"
+},
+{
+"code": "88122",
+"place": "Mostar-Euroherc",
+"post": "HP Mostar"
+},
+{
+"code": "88201",
+"place": "Blagaj",
+"post": "BH Pošta"
+},
+{
+"code": "88202",
+"place": "Buna",
+"post": "HP Mostar"
+},
+{
+"code": "88203",
+"place": "Kruševo",
+"post": "HP Mostar"
+},
+{
+"code": "88206",
+"place": "Podvelež",
+"post": "BH Pošta"
+},
+{
+"code": "88208",
+"place": "Potoci",
+"post": "BH Pošta"
+},
+{
+"code": "88215",
+"place": "Drežnica",
+"post": "BH Pošta"
+},
+{
+"code": "88220",
+"place": "Široki Brijeg",
+"post": "HP Mostar"
+},
+{
+"code": "88223",
+"place": "Ljuti Dolac",
+"post": "HP Mostar"
+},
+{
+"code": "88224",
+"place": "Jare",
+"post": "HP Mostar"
+},
+{
+"code": "88226",
+"place": "Kočerin",
+"post": "HP Mostar"
+},
+{
+"code": "88240",
+"place": "Posušje",
+"post": "HP Mostar"
+},
+{
+"code": "88240",
+"place": "Posušje-Općina",
+"post": "HP Mostar"
+},
+{
+"code": "88241",
+"place": "Posušje-Inđilović",
+"post": "HP Mostar"
+},
+{
+"code": "88242",
+"place": "Posušje-Lager",
+"post": "HP Mostar"
+},
+{
+"code": "88243",
+"place": "Broćanac",
+"post": "HP Mostar"
+},
+{
+"code": "88245",
+"place": "Rakitno",
+"post": "HP Mostar"
+},
+{
+"code": "88247",
+"place": "Vir",
+"post": "HP Mostar"
+},
+{
+"code": "88260",
+"place": "Čitluk",
+"post": "HP Mostar"
+},
+{
+"code": "88261",
+"place": "Čitluk-Euroherc",
+"post": "HP Mostar"
+},
+{
+"code": "88263",
+"place": "Blatnica",
+"post": "HP Mostar"
+},
+{
+"code": "88264",
+"place": "Međugorje-kiosk",
+"post": "HP Mostar"
+},
+{
+"code": "88265",
+"place": "Čerin",
+"post": "HP Mostar"
+},
+{
+"code": "88266",
+"place": "Međugorje",
+"post": "HP Mostar"
+},
+{
+"code": "88267",
+"place": "Međugorje",
+"post": "HP Mostar"
+},
+{
+"code": "88268",
+"place": "Biletić Polje",
+"post": "HP Mostar"
+},
+{
+"code": "88280",
+"place": "Nevesinje",
+"post": "Pošte Srpske"
+},
+{
+"code": "88283",
+"place": "Kifino Selo",
+"post": "Pošte Srpske"
+},
+{
+"code": "88285",
+"place": "Odžak",
+"post": "Pošte Srpske"
+},
+{
+"code": "88286",
+"place": "Zovi Do",
+"post": "Pošte Srpske"
+},
+{
+"code": "88300",
+"place": "Čapljina",
+"post": "HP Mostar"
+},
+{
+"code": "88301",
+"place": "Vojarna Grabovine",
+"post": "HP Mostar"
+},
+{
+"code": "88302",
+"place": "Čapljina-Euroherc",
+"post": "HP Mostar"
+},
+{
+"code": "88305",
+"place": "Domanovići",
+"post": "HP Mostar"
+},
+{
+"code": "88306",
+"place": "Gabela",
+"post": "HP Mostar"
+},
+{
+"code": "88307",
+"place": "Višići",
+"post": "HP Mostar"
+},
+{
+"code": "88320",
+"place": "Ljubuški",
+"post": "HP Mostar"
+},
+{
+"code": "88321",
+"place": "Ljubuški-Euroherc",
+"post": "HP Mostar"
+},
+{
+"code": "88322",
+"place": "Ljubuški-Općina",
+"post": "HP Mostar"
+},
+{
+"code": "88323",
+"place": "Studenci",
+"post": "HP Mostar"
+},
+{
+"code": "88324",
+"place": "Klobuk (Ljubuški)",
+"post": "HP Mostar"
+},
+{
+"code": "88325",
+"place": "Radišići",
+"post": "HP Mostar"
+},
+{
+"code": "88326",
+"place": "Vitina",
+"post": "HP Mostar"
+},
+{
+"code": "88327",
+"place": "Prolog",
+"post": "HP Mostar"
+},
+{
+"code": "88340",
+"place": "Grude",
+"post": "HP Mostar"
+},
+{
+"code": "88341",
+"place": "Grude-MUP",
+"post": "HP Mostar"
+},
+{
+"code": "88342",
+"place": "Dužice",
+"post": "HP Mostar"
+},
+{
+"code": "88343",
+"place": "Donji Mamići",
+"post": "HP Mostar"
+},
+{
+"code": "88344",
+"place": "Drinovci",
+"post": "HP Mostar"
+},
+{
+"code": "88345",
+"place": "Sovići",
+"post": "HP Mostar"
+},
+{
+"code": "88347",
+"place": "Ružići",
+"post": "HP Mostar"
+},
+{
+"code": "88348",
+"place": "Tihaljina",
+"post": "HP Mostar"
+},
+{
+"code": "88360",
+"place": "Stolac",
+"post": "HP Mostar"
+},
+{
+"code": "88363",
+"place": "Berkovići",
+"post": "Pošte Srpske"
+},
+{
+"code": "88365",
+"place": "Borojevići",
+"post": "HP Mostar"
+},
+{
+"code": "88366",
+"place": "Burmazi",
+"post": "HP Mostar"
+},
+{
+"code": "88367",
+"place": "Crnići",
+"post": "HP Mostar"
+},
+{
+"code": "88368",
+"place": "Hodovo",
+"post": "HP Mostar"
+},
+{
+"code": "88370",
+"place": "Ravno",
+"post": "HP Mostar"
+},
+{
+"code": "88375",
+"place": "Trebinja",
+"post": "HP Mostar"
+},
+{
+"code": "88380",
+"place": "Ljubinje",
+"post": "Pošte Srpske"
+},
+{
+"code": "88390",
+"place": "Neum",
+"post": "HP Mostar"
+},
+{
+"code": "88392",
+"place": "Gradac",
+"post": "HP Mostar"
+},
+{
+"code": "88394",
+"place": "Hutovo",
+"post": "HP Mostar"
+},
+{
+"code": "88395",
+"place": "Hrasno",
+"post": "HP Mostar"
+},
+{
+"code": "88400",
+"place": "Konjic",
+"post": "BH Pošta"
+},
+{
+"code": "88403",
+"place": "Podorašac",
+"post": "BH Pošta"
+},
+{
+"code": "88404",
+"place": "Čelebići",
+"post": "BH Pošta"
+},
+{
+"code": "88405",
+"place": "Boračko Jezero",
+"post": "BH Pošta"
+},
+{
+"code": "88406",
+"place": "Glavatičevo",
+"post": "BH Pošta"
+},
+{
+"code": "88407",
+"place": "Bjelimići",
+"post": "BH Pošta"
+},
+{
+"code": "88409",
+"place": "Buturović Polje",
+"post": "BH Pošta"
+},
+{
+"code": "88420",
+"place": "Jablanica",
+"post": "BH Pošta"
+},
+{
+"code": "88422",
+"place": "Glogošnica",
+"post": "BH Pošta"
+},
+{
+"code": "88423",
+"place": "Ostrožac",
+"post": "BH Pošta"
+},
+{
+"code": "88440",
+"place": "Prozor",
+"post": "HP Mostar"
+},
+{
+"code": "88443",
+"place": "Gračac",
+"post": "HP Mostar"
+},
+{
+"code": "88444",
+"place": "Uzdol",
+"post": "HP Mostar"
+},
+{
+"code": "88446",
+"place": "Doljani",
+"post": "HP Mostar"
+},
+{
+"code": "89101",
+"place": "Trebinje",
+"post": "Pošte Srpske"
+},
+{
+"code": "89201",
+"place": "Grab",
+"post": "Pošte Srpske"
+},
+{
+"code": "89204",
+"place": "Mosko",
+"post": "Pošte Srpske"
+},
+{
+"code": "89208",
+"place": "Lastva",
+"post": "Pošte Srpske"
+},
+{
+"code": "89209",
+"place": "Ljubomir",
+"post": "Pošte Srpske"
+},
+{
+"code": "89230",
+"place": "Bileća",
+"post": "Pošte Srpske"
+},
+{
+"code": "89233",
+"place": "Divin",
+"post": "Pošte Srpske"
+},
+{
+"code": "89240",
+"place": "Gacko",
+"post": "Pošte Srpske"
+},
+{
+"code": "89245",
+"place": "Avtovac",
+"post": "Pošte Srpske"
+},
+{
+"code": "89247",
+"place": "Fojnica",
+"post": "Pošte Srpske"
+}
+]
