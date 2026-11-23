@@ -99,3 +99,22 @@ Admin SDK zaobilazi pravila, ali klijentski pristup treba zatvoriti:
 - Pozadinsko osvježavanje kataloga se pokreće prvim zahtjevom poslije deploya;
   na serverless funkciji tajmer ne živi dugo, pa je osvježavanje najbolje
   pokretati ručno ili preko Vercel Cron-a koji poziva `/api/scraper/run`.
+
+## 6. Automatsko podešavanje preko API-ja (bez dashboarda)
+
+Ako imaš Vercel token (`vercel.com/account/tokens`), sve varijable i deploy ide
+jednom komandom iz korijena projekta:
+
+```bash
+VERCEL_TOKEN=... node scripts/vercel-push-env.mjs giga-ai
+```
+
+Skripta:
+1. nađe projekat po imenu,
+2. pošalje sve varijable iz `.env.local` (Production + Preview) i pretvori
+   servisni račun u `FIREBASE_SERVICE_ACCOUNT_BASE64`,
+3. pokrene production deploy iz GitHub `main`,
+4. sačeka `READY` i ispiše rezultat `https://giga-ai.vercel.app/api/health`.
+
+Ispisuje samo imena varijabli i dužine vrijednosti — nikad same vrijednosti.
+Poslije upotrebe token obriši na istoj stranici; aplikacija bez njega radi normalno.
