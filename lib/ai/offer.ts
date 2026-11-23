@@ -9,11 +9,21 @@ import { formatMoney } from '@/lib/domain/money';
  */
 export function isOfferQuestion(text: string): boolean {
   if (!text.trim()) return false;
-  return /(?<![\p{L}])(koje|koja|koji|koliko|ima(te)?\s+li|imate|imamo|šta|sta|koje\s+sve|sve\s+koje)(?![\p{L}])/iu.test(
-    text,
-  ) || /asortiman|ponud[au]|koje sve|cijeli spisak|popis/iu.test(text);
+  const normalized = text.toLowerCase();
+  // Pitanje o cijeloj ponudi, a ne o konkretnoj narudzbi: "koje sve komode imate",
+  // "sta imate od garnitura". Samo "koliko" ("koliko ukupno sa dostavom") NIJE
+  // pitanje o ponudi - inace se narudzba od dva proizvoda pretvori u spisak.
+  if (
+    /(?<![\p{L}])(koje|koja|koji)\s+sve(?![\p{L}])/iu.test(normalized) ||
+    /(?<![\p{L}])(koje|koja|koji)(?![\p{L}])[^.!?\n]{0,40}(imate|imamo|postoji|postoje|nudite)/iu.test(normalized) ||
+    /(?<![\p{L}])(ima(te)?\s+li|imate)(?![\p{L}])/iu.test(normalized) ||
+    /asortiman|ponud[au]|cijeli spisak|popis/iu.test(normalized)
+  ) {
+    return true;
+  }
+  // "koliko modela/vrsta/komada imate" jeste pitanje o ponudi, "koliko ukupno" nije.
+  return /koliko\s+(sve\s+)?(modela|vrsta|komada|razli[cč]itih|boja|dimenzija|proizvoda)/iu.test(normalized);
 }
-
 /** Proizvodi koje smijemo ponuditi: samo na stanju (R26). */
 export function offerCandidates(products: Product[], limit = 15): Product[] {
   const seen = new Set<string>();

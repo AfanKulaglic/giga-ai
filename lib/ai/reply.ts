@@ -11,11 +11,13 @@ import { findTypos } from '@/lib/domain/productSearch';
 import { availableColors, extractSize, familyBlock, familySizes, modelKey } from '@/lib/domain/productVariants';
 import { calculateOrder } from '@/lib/domain/calculator';
 import { findPostalCodesInText, postalCodesPromptBlock } from '@/lib/domain/postalCodes';
+import { parseQuantity } from '@/lib/domain/contextSync';
 import { serverEnv } from '@/lib/config/env';
 import { chatCompletion } from './client';
 import { CORE_RULES, HARD_STOPS, buildReplySystemPrompt, transcriptBlock } from './prompts';
 import { REPLY_CHECKLIST } from './rules';
 import { applyDeterministicFixes, buildSafeReply, checkCustomerReply, type ReplyGuardContext } from './replyGuard';
+import { buildPackageQuote, narrowPackageCandidates, packagePromptBlock, type PackageQuote, type PackageItemInput } from '@/lib/domain/packageQuote';
 import { liveCheckNotes, refreshLiveProducts, type LiveCheck } from '@/lib/site/gigaLive';
 import {
   isOfferQuestion,
@@ -233,6 +235,42 @@ export async function generateCustomerReply(args: {
    * Delivery for one product, always from the real weight and the configured
    * tiers. Never guessed, never taken from the model (R13/R14/R22).
    */
+  /**
+   * R30: narudzba je jedan paket. Kada kupac uzima vise proizvoda (ili vise
+   * komada), kilaze se sabiraju i dostava se racuna JEDNOM - nikad po proizvodu.
+   * Sav novac racuna kalkulator, model samo prepisuje brojeve.
+   */
+  const packageItems: PackageItemInput[] = [];
+  const packageSeen = new Set<string>();
+  const contextRefs = session.context.products ?? [];
+  const textQuantity = parseQuantity(lastCustomerMessage?.content ?? '') ?? 1;
+  const addPackageItem = (entry: { product: Product; additional: { weightKg?: number | null } | null }) => {
+    if (packageSeen.has(entry.product.id)) return;
+    packageSeen.add(entry.product.id);
+    const ref = contextRefs.find((item) => item.productId === entry.product.id);
+    packageItems.push({
+      productId: entry.product.id,
+      name: entry.product.name,
+      sku: entry.product.sku,
+      unitPrice: entry.product.price ?? ref?.unitPrice ?? null,
+      quantity: ref?.quantity ?? textQuantity,
+      weightKg: entry.additional?.weightKg ?? null,
+    });
+  };
+  // 1) proizvodi koje je kupac izricito imenovao (familija + dimenzija/ladice iz poruke)
+  for (const entry of narrowPackageCandidates(
+    confirmedProducts.map((item) => ({ ...item, name: item.product.name })),
+    lastCustomerMessage?.content ?? '',
+  )) {
+    addPackageItem(entry);
+  }
+  // 2) proizvodi koje sesija vec zna (dodani rucno ili ranije u razgovoru)
+  for (const entry of confirmedProducts) {
+    if (!contextRefs.some((ref) => ref.productId === entry.product.id)) continue;
+    addPackageItem(entry);
+  }
+  const packageQuote: PackageQuote | null = buildPackageQuote(packageItems, settings.calculator);
+
   const deliveryFor = (
     product: Product,
     price: number | null,
@@ -313,7 +351,9 @@ export async function generateCustomerReply(args: {
   // Dostava ide uz SVAKU cijenu. Kada težina nije unesena, iznos se ne izmišlja:
   // u poruci ostaje praznina „dostava: ________ KM” koju agent dopuni.
   const deliveryBlocks: string[] = [];
-  for (const group of dimensionGroups) {
+  // R30: kod više proizvoda dostava se NE piše po proizvodu — samo za cijeli paket.
+
+  for (const group of packageQuote ? [] : dimensionGroups) {
     const rows = group.options.map(
       (option) =>
         `    - ${option.label}${option.available === false ? ' (trenutno nije na stanju)' : ''}: cijena ${
@@ -385,7 +425,8 @@ export async function generateCustomerReply(args: {
 ${contextText || '(nema strukturiranih podataka)'}`,
     productFactsBlock(confirmedProducts),
     ...dimensionBlocks,
-    ...deliveryBlocks,
+    packageQuote ? packagePromptBlock(packageQuote) : '',
+    ...(packageQuote ? [] : deliveryBlocks),
     offerBlock,
     orderConfirmedBlock,
     notAvailableBlock,
@@ -451,8 +492,12 @@ ${names}`,
   const deliveryAmount = primary
     ? deliveryFor(primary.product, primary.product.price, primary.additional?.weightKg ?? null, primary.product.currency)
     : null;
+  // Kod paketa je mjerodavan ukupan iznos dostave za sve proizvode zajedno.
+  const packageDelivery = packageQuote?.deliveryAmount != null
+    ? { amount: packageQuote.deliveryAmount, currency: packageQuote.currency }
+    : null;
   // Dostava glavnog proizvoda: iznos kada težina postoji, inače praznina za agenta.
-  if (primary) {
+  if (primary && !packageQuote) {
     deliveryBlocks.push(
       deliveryAmount
         ? `  DOSTAVA ZA GLAVNI PROIZVOD: ${formatMoney(deliveryAmount.amount, deliveryAmount.currency)}`
@@ -477,7 +522,8 @@ ${names}`,
 
   const guardCtx: ReplyGuardContext = {
     products: confirmedProducts,
-    deliveryAmount,
+    deliveryAmount: packageDelivery ?? deliveryAmount,
+    packageQuote,
     specPairs,
     customerMessage: lastCustomerMessage?.content ?? '',
     deliveryAmounts: settings.calculator.weightTiers.filter((tier) => tier.enabled).map((tier) => tier.amount),
@@ -593,7 +639,14 @@ ${names}`,
   const withoutWeight = confirmedProducts
     .filter(({ additional }) => typeof additional?.weightKg !== 'number' || additional.weightKg <= 0)
     .map(({ product }) => product.name);
-  if (withoutWeight.length === 1) {
+  if (packageQuote) {
+    // Kod paketa je dostava jedna — i napomena agentu mora biti jedna.
+    notes.push(
+      packageQuote.deliveryAmount === null
+        ? `Dostava za cijeli paket je prazna jer nema kilaže za: ${packageQuote.missingWeights.join(', ')}. Unesi kilažu u /products da se iznos izračuna sam.`
+        : `Dostava za cijeli paket (ukupno ${packageQuote.totalWeightKg} kg): ${formatMoney(packageQuote.deliveryAmount, packageQuote.currency)}. Ukupno za plaćanje: ${formatMoney(packageQuote.total ?? 0, packageQuote.currency)}.`,
+    );
+  } else if (withoutWeight.length === 1) {
     notes.push(`Nemam podatak o težini za „${withoutWeight[0]}” — u poruci je ostavljeno „dostava: ________ KM”.`);
   } else if (withoutWeight.length > 1) {
     notes.push(

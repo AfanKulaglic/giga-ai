@@ -1,6 +1,7 @@
 import type { Product, ProductAdditionalData } from '@/lib/domain/types';
 import { formatMoney } from '@/lib/domain/money';
 import { isAvailable } from '@/lib/domain/productVariants';
+import { hasPackageTotal, packageTotalsText, type PackageQuote } from '@/lib/domain/packageQuote';
 
 /**
  * Deterministic gate for every customer-facing reply.
@@ -41,6 +42,8 @@ export interface ReplyGuardContext {
   deliveryAmounts?: number[];
   /** Delivery price computed from the product's weight (R22 step 2). */
   deliveryAmount?: { amount: number; currency: string } | null;
+  /** R30: obračun cijelog paketa (više proizvoda = jedna dostava). */
+  packageQuote?: PackageQuote | null;
   /** Real specifications from catalogue + agent data, for R22 step 1. */
   specPairs?: { label: string; value: string }[];
 }
@@ -163,6 +166,18 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
     }
   }
   if (ctx.deliveryAmount) allowedPrices.add(ctx.deliveryAmount.amount);
+  // Iznosi paketa su izračunati kalkulatorom — nisu izmišljeni.
+  if (ctx.packageQuote) {
+    const quote = ctx.packageQuote;
+    for (const line of quote.lines) {
+      allowedPrices.add(line.unitPrice);
+      allowedPrices.add(line.lineTotal);
+    }
+    for (const amount of [quote.subtotal, quote.discountAmount, quote.subtotalAfterDiscount, quote.total]) {
+      if (typeof amount === 'number') allowedPrices.add(amount);
+    }
+    if (quote.deliveryAmount !== null) allowedPrices.add(quote.deliveryAmount);
+  }
 
   const invented = moneyNumbers(text).filter(
     (value) => ![...allowedPrices].some((allowed) => Math.abs(allowed - value) < 0.01),
@@ -460,6 +475,30 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
     });
   }
 
+  // R30: kod više proizvoda kupac plaća JEDAN paket — poruka mora imati ukupan
+  // iznos svih proizvoda i jednu dostavu za cijeli paket.
+  const quote = ctx.packageQuote;
+  if (quote && (quote.lines.length > 1 || quote.lines.some((line) => line.quantity > 1)) && !hasPackageTotal(text)) {
+    issues.push({
+      code: 'package_total_missing',
+      hint: 'Napiši ukupan iznos za sve proizvode zajedno i jednu dostavu za cijeli paket (npr. „Proizvodi ukupno: X KM”, „Dostava za cijeli paket: Y KM”, „UKUPNO ZA PLAĆANJE: Z KM”). Nikad dostavu po proizvodu.',
+      message: 'Nedostaje ukupan iznos i ukupna dostava za narudžbu od više proizvoda (R30).',
+    });
+  }
+  // R30: dostava je jedna za cijeli paket. Ako se u poruci pojavljuje vise
+  // puta (po proizvodu), poruka se popravlja ili se koristi sigurna poruka.
+  if (quote) {
+    // Broje se samo CJENOVNE dostave (uz KM); obična rečenica o roku dostave nije greška.
+    const pricedDeliveries = (text.match(/dostav[a-zčćžšđ]*[^.!?\n]{0,30}KM/giu) ?? []).length;
+    if (pricedDeliveries > 1) {
+      issues.push({
+        code: 'package_delivery_split',
+        hint: 'Dostavu napiši SAMO JEDNOM, za cijeli paket. Nikad po proizvodu i nikad uz svaku cijenu.',
+        message: 'Dostava je navedena više puta — kod paketa se piše jedna dostava za sve (R30).',
+      });
+    }
+  }
+
   return issues;
 }
 
@@ -491,12 +530,29 @@ export function applyDeterministicFixes(
 
 Dostava: ________ KM (težina nije unesena u sistem — dopunite iznos)`;
   }
+  if (codes.has('package_total_missing') && ctx.packageQuote) {
+    text = `${text.replace(/\s+$/, '')}` + '\n\n' + packageTotalsText(ctx.packageQuote);
+  }
+  if (ctx.packageQuote && (codes.has('package_delivery_split') || codes.has('package_total_missing'))) {
+    // Kod paketa se svaka pojedinacna dostava uklanja; ostaje jedna, za cijeli paket.
+    const keepLine = (line: string) =>
+      !/dostav/i.test(line) || /ukupno|paket|rok|dana|radnih/i.test(line);
+    text = text
+      .split(/\n/u)
+      .filter(keepLine)
+      .join('\n')
+      .replace(/\n{3,}/gu, '\n\n')
+      .trim();
+    // Cijena proizvoda i dalje mora ostati u poruci — ako je linija nestala,
+    // paketni blok je vraća zajedno sa ukupnim iznosom.
+    if (!hasPackageTotal(text)) {
+      text = `${text}\n\n${packageTotalsText(ctx.packageQuote)}`;
+    }
+  }
+
   if (codes.has('offer_link_missing') && ctx.offerLink) {
     const line = ctx.offerLinkLine ?? `Sve modele možete pogledati ovdje: ${ctx.offerLink}`;
-    text = `${text.replace(/\s+$/, '')}
-
-${line}
-Recite nam koji model Vam se sviđa i za njega Vam šaljem tačnu cijenu i dostavu.`;
+    text = `${text.replace(/\s+$/, '')}` + '\n\n' + line + '\nRecite nam koji model Vam se sviđa i za njega Vam šaljem tačnu cijenu i dostavu.';
   }
   if (codes.has('offer_list_incomplete') && ctx.offerList?.length) {
     const flat = normalize(text);
@@ -682,7 +738,7 @@ export function buildSafeReply(ctx: ReplyGuardContext): string {
           '',
         ]
       : null;
-  const sizeBlock = offerBlock ?? (sizes
+  const sizeBlock = ctx.packageQuote ? [] : offerBlock ?? (sizes
     ? [
         'Imamo ovaj model u više dimenzija:',
         ...sizes.options
@@ -714,7 +770,12 @@ export function buildSafeReply(ctx: ReplyGuardContext): string {
         '',
       ]);
 
-  const deliveryLine = offerBlock
+  // R30: kod više proizvoda sigurna poruka uvijek sadrži ukupan iznos i jednu
+  // dostavu za cijeli paket — nikad pojedinačno po proizvodu.
+  const packageBlock = ctx.packageQuote
+    ? [packageTotalsText(ctx.packageQuote), '']
+    : null;
+  const deliveryLine = packageBlock || offerBlock
     ? []
     : sizes
     ? []
@@ -742,8 +803,9 @@ export function buildSafeReply(ctx: ReplyGuardContext): string {
     ...actionLine,
     ...specLine,
     ...sizeBlock,
+    ...(packageBlock ?? []),
     ...deliveryLine.filter((line) => line !== undefined),
-    ...(ctx.orderConfirmed && !sizes
+    ...(ctx.orderConfirmed && !sizes && !packageBlock
       ? ['Poštarina: ________ KM', '']
       : []),
     ...orderLines,

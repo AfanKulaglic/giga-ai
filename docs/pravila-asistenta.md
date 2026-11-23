@@ -200,3 +200,14 @@ Napomene za uređivanje:
 - Kada se traže podaci za narudžbu, rečenica glasi: „Molimo Vas da nam pošaljete ime i prezime, kontakt telefon, adresu, grad i poštanski broj.”
 - Isto važi za sve ostale riječi: „adresa”, „grad”, „poštanski broj”, „telefon” — bez izmišljenih oblika i bez spajanja dvije riječi u jednu.
 - Ako model ipak pogriješi, aplikacija sama ispravlja oblik prije nego što se poruka prikaže agentu.
+
+**R30 — Više proizvoda je jedan paket, jedna dostava (24.11.2026)**
+- Kada kupac naručuje ili se raspituje za više proizvoda odjednom (ili više komada istog proizvoda), poruka obavezno sadrži sve nabrojano:
+  - cijenu svakog proizvoda pojedinačno (naziv × količina — iznos),
+  - ukupan iznos svih proizvoda zajedno (zbir),
+  - popust ako je dostignut prag iz R28 (samo isti proizvod), sa procentom i iznosom popusta,
+  - jednu dostavu za cijeli paket — kilaža se sabira za sve proizvode,
+  - UKUPNO ZA PLAĆANJE = proizvodi nakon popusta + dostava, ili „+ ________ KM” kada kilaža nije unesena.
+- Dostava se nikada ne piše pojedinačno po proizvodu: pošiljka je jedan paket, pa kupac plaća jednu dostavu za ukupnu težinu. Nijedan proizvod nema „svoju” dostavu u zbiru.
+- Pojedinačnu cijenu i dostavu za svaki proizvod posebno navodimo samo ako kupac izričito traži „koliko je svaki posebno” ili „kolika je dostava za svaki”.
+- Ukupan iznos, popust i dostavu računa kalkulator u aplikaciji; asistent ih nikada ne sabira ni ne procjenjuje sam (R17).
