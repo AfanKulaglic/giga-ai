@@ -80,9 +80,18 @@ function productFactsBlock(
       if (parts.length) lines.push(`  DIMENZIJE: ${parts.join(' × ')} cm`);
     }
     if (additional?.fields?.length) {
-      lines.push(
-        `  RUČNO DODANO (provjerio agent): ${additional.fields.map((f) => `${f.fieldName}=${f.value}${f.unit ? ` ${f.unit}` : ''}`).join('; ')}`,
-      );
+      const agentFields = additional.fields.filter((field) => field.note !== 'gigahub');
+      const gigahubFields = additional.fields.filter((field) => field.note === 'gigahub');
+      if (agentFields.length) {
+        lines.push(
+          `  RUČNO DODANO (provjerio agent): ${agentFields.map((f) => `${f.fieldName}=${f.value}${f.unit ? ` ${f.unit}` : ''}`).join('; ')}`,
+        );
+      }
+      if (gigahubFields.length) {
+        lines.push(
+          `  IZ GIGAHUBA (specifikacije artikla): ${gigahubFields.map((f) => `${f.fieldName}=${f.value}${f.unit ? ` ${f.unit}` : ''}`).join('; ')}`,
+        );
+      }
     }
     if (product.missingFields?.length) lines.push(`  NEDOSTAJE U IZVORU: ${product.missingFields.join(', ')}`);
     return lines.join('\n');

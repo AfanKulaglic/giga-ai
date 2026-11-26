@@ -33,6 +33,12 @@ interface Found {
   /** Prodavnica navodi da se artikal moze naruciti, ali ne pise koliko komada. */
   availableUnquantified: boolean;
   fiscalCode: string | null;
+  /** Sve specifikacije koje GigaHub prikazuje (Brend, Boja, Model, materijali…). */
+  specs: { label: string; value: string }[];
+  /** MPC (maloprodajna cijena sa PDV) i dolazak robe, ako su prikazani. */
+  mpc: number | null;
+  incoming: string | null;
+  reservations: { offers: number | null; orders: number | null; shipments: number | null };
   notFound: boolean;
 }
 
@@ -80,6 +86,10 @@ async function readArticle(page: import('puppeteer-core').Page, sku: string): Pr
       quantity: null,
       availableUnquantified: false,
       fiscalCode: null,
+      specs: [],
+      mpc: null,
+      incoming: null,
+      reservations: { offers: null, orders: null, shipments: null },
       notFound: true,
     };
   }
@@ -131,6 +141,35 @@ async function readArticle(page: import('puppeteer-core').Page, sku: string): Pr
     availabilityBlock.some((line) => /Prodavnica|moguće naručiti|moguce naruciti|preuzeti/i.test(line)) &&
     !availabilityBlock.some((line) => /rasprodan|nema na stanju|nije dostupno/i.test(line));
 
+  // Sve specifikacije: blok "Uputstvo" (label u jednom redu, vrijednost u
+  // sljedecem) i blok "Karakteristike proizvoda" (label: vrijednost).
+  const specs: { label: string; value: string }[] = [];
+  const labelIndex = list.findIndex((line) => /^Uputstvo$/i.test(line));
+  const specsStop = list.findIndex((line, index) =>
+    index > labelIndex && /^(Dostupnost|Dostupno|Dodaj U Korpu|Kupi odmah)\b/i.test(line),
+  );
+  if (labelIndex >= 0) {
+    const end = specsStop > labelIndex ? specsStop : Math.min(list.length, labelIndex + 40);
+    for (let i = labelIndex + 1; i < end; i += 1) {
+      const label = list[i]!;
+      const value = list[i + 1] ?? '';
+      if (!/:$/.test(label) || !value || /:$/.test(value)) continue;
+      specs.push({ label: label.replace(/:$/, '').trim(), value: value.slice(0, 160) });
+      i += 1;
+    }
+  }
+  const charIndex = list.findIndex((line) => /^Karakteristike proizvoda$/i.test(line));
+  if (charIndex >= 0) {
+    for (const line of list.slice(charIndex + 1, charIndex + 40)) {
+      const match = /^([^:]{2,48}):\s*(.+)$/.exec(line);
+      if (!match) continue;
+      const label = match[1]!.trim();
+      const value = match[2]!.trim();
+      if (!value || specs.some((entry) => entry.label.toLowerCase() === label.toLowerCase())) continue;
+      specs.push({ label, value: value.slice(0, 160) });
+    }
+  }
+
   return {
     name,
     weightKg,
@@ -138,6 +177,14 @@ async function readArticle(page: import('puppeteer-core').Page, sku: string): Pr
     quantity,
     availableUnquantified,
     fiscalCode: after(list, /^Sifra u kasi/i),
+    specs,
+    mpc: num(after(list, /^MPC\s*:/i)),
+    incoming: after(list, /^DOLASCI\s*:/i),
+    reservations: {
+      offers: num(after(list, /^Rez Ponude\s*:/i)),
+      orders: num(after(list, /^Rez Narudzbe\s*:/i)),
+      shipments: num(after(list, /^Rez Posiljke\s*:/i)),
+    },
     notFound: false,
   };
 }
@@ -226,19 +273,47 @@ async function main() {
             ? 'in_stock'
             : 'out_of_stock';
       if (!dry) {
-        if (found.weightKg !== null || found.dimensionsCm) {
-          const existing = (await db.ref(`giga_additional/${product.id}`).get()).val() as
-            | { fields?: unknown[] }
-            | null;
-          await db.ref(`giga_additional/${product.id}`).update({
-            productId: product.id,
-            ...(existing?.fields ? { fields: existing.fields } : {}),
-            weightKg: found.weightKg,
-            dimensionsCm: found.dimensionsCm,
-            updatedAt: new Date().toISOString(),
-            updatedBy: 'gigahub-sync',
-          });
-        }
+        const existing = (await db.ref(`giga_additional/${product.id}`).get()).val() as
+          | { fields?: unknown }
+          | null;
+        // Rucno dodana polja agenta se cuvaju; GigaHub polja se osvjezavaju.
+        // RTDB nekad vrati niz kao objekat sa numerickim kljucevima.
+        const rawFields = existing?.fields;
+        const fieldList: { fieldName: string; note?: string | null }[] = Array.isArray(rawFields)
+          ? (rawFields as { fieldName: string; note?: string | null }[])
+          : rawFields && typeof rawFields === 'object'
+            ? Object.values(rawFields as Record<string, { fieldName: string; note?: string | null }>)
+            : [];
+        const agentFields = fieldList.filter((field) => field?.note !== 'gigahub');
+        const skipLabels = /^(širina|sirina|dubina|visina|dostupnost|dostupno|te[žz]ina|sifra u kasi|naziv u kasi|stari naziv u kasi)\b/i;
+        const now = new Date().toISOString();
+        const gigahubFields = found.specs
+          .filter((spec) => !skipLabels.test(spec.label))
+          .map((spec) => ({
+            fieldName: spec.label,
+            value: spec.value,
+            unit: null,
+            addedAt: now,
+            note: 'gigahub',
+            addedBy: 'gigahub-sync',
+          }));
+        const fields = [...agentFields, ...gigahubFields];
+        await db.ref(`giga_additional/${product.id}`).update({
+          productId: product.id,
+          ...(fields.length ? { fields } : {}),
+          weightKg: found.weightKg,
+          dimensionsCm: found.dimensionsCm,
+          gigahub: {
+            mpc: found.mpc,
+            fiscalCode: found.fiscalCode,
+            incoming: found.incoming,
+            reservations: found.reservations,
+            specsCount: found.specs.length,
+            updatedAt: now,
+          },
+          updatedAt: now,
+          updatedBy: 'gigahub-sync',
+        });
         await db.ref(`giga_products/${product.id}/availability`).set({
           status: stockStatus,
           raw:

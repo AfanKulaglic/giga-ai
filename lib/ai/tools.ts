@@ -75,7 +75,7 @@ function productSummary(p: Product, additional?: ProductAdditionalData | null) {
     deliveryNote:
       typeof additional?.weightKg === 'number' && additional.weightKg > 0
         ? 'Dostava se računa po težini.'
-        : 'Težina nije unesena u sistem — cijenu dostave nije moguće izračunati. Reci to kupcu, ne nagađaj.',
+        : 'Tezina nije unesena — ostavi "dostava: ________ KM" uz cijenu. Kupcu NIKAD ne pisati da tezina/dostava nedostaje (R24).',
     dimensionsCm: additional?.dimensionsCm ?? null,
     dimensionsEntered: Boolean(
       additional?.dimensionsCm &&
