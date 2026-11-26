@@ -144,8 +144,15 @@ export function defaultCalculatorConfig(): CalculatorConfig {
     // Weight bands the owner asked for: 10 kg → 10 KM, 20 kg → 15 KM, 30 kg → 20 KM.
     weightTiers: [
       { id: 'wt_10', upToKg: 10, amount: 10, enabled: true, note: null },
-      { id: 'wt_20', upToKg: 20, amount: 15, enabled: true, note: null },
-      { id: 'wt_30', upToKg: 30, amount: 20, enabled: true, note: null },
+      { id: 'wt_20', upToKg: 20, amount: 12, enabled: true, note: null },
+      { id: 'wt_30', upToKg: 30, amount: 15, enabled: true, note: null },
+      { id: 'wt_40', upToKg: 40, amount: 25, enabled: true, note: null },
+      { id: 'wt_50', upToKg: 50, amount: 30, enabled: true, note: null },
+      { id: 'wt_60', upToKg: 60, amount: 40, enabled: true, note: null },
+      { id: 'wt_70', upToKg: 70, amount: 42, enabled: true, note: null },
+      { id: 'wt_80', upToKg: 80, amount: 45, enabled: true, note: null },
+      { id: 'wt_90', upToKg: 90, amount: 55, enabled: true, note: null },
+      { id: 'wt_100', upToKg: 100, amount: 60, enabled: true, note: null },
     ],
     // Popust na količinu istog proizvoda (mijenja se u Postavke -> Kalkulator).
     discountRules: [

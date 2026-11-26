@@ -59,7 +59,7 @@ function productFactsBlock(
       );
     }
     if (additional?.weightKg !== null && additional?.weightKg !== undefined) {
-      lines.push(`  TEŽINA: ${additional.weightKg} kg (uneseno ručno, koristi se za dostavu)`);
+      lines.push(`  TEŽINA: ${additional.weightKg} kg (koristi se za dostavu)`);
     } else {
       lines.push(
         '  TEŽINA: NIJE UNESENA U SISTEM — ovo je INTERNO, kupcu se o tome NE PIŠE NIŠTA. ' +

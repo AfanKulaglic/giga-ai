@@ -54,6 +54,10 @@ export function modelKey(name: string): string {
 }
 
 export function isAvailable(product: Product): boolean {
+  // R31: GigaHub je mjerodavan — kolicina 1 ili manje nije dostupno za prodaju.
+  if (product.availability.source === 'gigahub' && product.availability.quantity != null) {
+    return product.availability.quantity >= 2;
+  }
   if (product.availability.status === 'out_of_stock') return false;
   if (product.variants.length) return product.variants.some((variant) => variant.available !== false);
   return product.availability.status === 'in_stock';

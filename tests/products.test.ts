@@ -8,6 +8,7 @@ import {
 } from '@/lib/domain/productNormalize';
 import { expandTokens, identifyProduct, searchProductCatalog } from '@/lib/domain/productSearch';
 import { applyLiveState, handleFromUrl, liveCheckNotes, parseLiveProduct } from '@/lib/site/gigaLive';
+import { isAvailable } from '@/lib/domain/productVariants';
 
 const raw = (overrides: Partial<ShopifyProduct> = {}): ShopifyProduct => ({
   id: 9001,
@@ -209,5 +210,38 @@ describe('provjera stvarnog stanja na giga.ba', () => {
       },
     ]);
     expect(notes[0]).toContain('80.00 → 95.00 KM');
+  });
+});
+
+describe('GigaHub stanje (R31)', () => {
+  const base = () => normalizeShopifyProduct(raw(), { now: '2026-01-01T00:00:00.000Z' }).product;
+  const withGigahub = (quantity: number | null) => ({
+    ...base(),
+    availability: { status: 'in_stock' as const, raw: 'GigaHub', checkedAt: '2026-11-26T00:00:00.000Z', source: 'gigahub' as const, quantity },
+  });
+
+  it('kolicina 1 nije dostupna za prodaju', () => {
+    expect(isAvailable(withGigahub(1))).toBe(false);
+  });
+
+  it('kolicina 2 je dostupna', () => {
+    expect(isAvailable(withGigahub(2))).toBe(true);
+  });
+
+  it('bez podatka o kolicini vazi status iz baze', () => {
+    expect(isAvailable(withGigahub(null))).toBe(true);
+  });
+
+  it('live provjera giga.ba ne prepisuje GigaHub stanje', () => {
+    const product = withGigahub(0);
+    const next = applyLiveState(product, {
+      price: 100,
+      available: true,
+      variants: [],
+      checkedAt: '2026-11-26T01:00:00.000Z',
+    });
+    expect(next.availability.source).toBe('gigahub');
+    expect(next.availability.status).toBe('in_stock');
+    expect(isAvailable(next)).toBe(false);
   });
 });

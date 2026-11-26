@@ -18,7 +18,8 @@
     "scraper:sync": "tsx --env-file=.env.local worker/cli.ts --mode=sync",
     "scraper:schedule": "tsx --env-file=.env.local worker/cli.ts --mode=schedule",
     "migrate:rtdb": "tsx scripts/migrate-local-to-rtdb.ts",
-    "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});console.log('.next obrisan')\""
+    "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});console.log('.next obrisan')\"",
+    "gigahub:sync": "tsx scripts/gigahub-sync.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",

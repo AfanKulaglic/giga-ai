@@ -131,7 +131,12 @@ export interface ProductAvailability {
   raw: string | null;
   checkedAt: string | null;
   /** `live:product.js` = stanje provjereno na giga.ba u momentu odgovora. */
-  source: 'products.json' | 'product_page' | 'live:product.js' | 'manual' | 'none';
+  source: 'products.json' | 'product_page' | 'live:product.js' | 'manual' | 'gigahub' | 'none';
+  /**
+   * Kolicina koju GigaHub prijavljuje (R31). Kolicina 1 ili manje ne znaci
+   * da je proizvod dostupan za prodaju.
+   */
+  quantity?: number | null;
 }
 
 export type ExtractionStatus = 'complete' | 'incomplete' | 'failed';

@@ -211,3 +211,16 @@ Napomene za uređivanje:
 - Dostava se nikada ne piše pojedinačno po proizvodu: pošiljka je jedan paket, pa kupac plaća jednu dostavu za ukupnu težinu. Nijedan proizvod nema „svoju” dostavu u zbiru.
 - Pojedinačnu cijenu i dostavu za svaki proizvod posebno navodimo samo ako kupac izričito traži „koliko je svaki posebno” ili „kolika je dostava za svaki”.
 - Ukupan iznos, popust i dostavu računa kalkulator u aplikaciji; asistent ih nikada ne sabira ni ne procjenjuje sam (R17).
+
+**R31 — Stanje na stanju mjerodavno iz GigaHuba (26.11.2026)**
+- Za pitanje „ima li na stanju” mjerodavan je GigaHub, ne giga.ba: ako se podaci razlikuju, prednost uvijek ima GigaHub.
+- Proizvodi su isti u GigaHubu i na giga.ba (isti model, ista šifra). Ako proizvod postoji na giga.ba a nije ga moguće naći u GigaHubu, tretira se kao da ga nema na stanju — bez izmišljanja.
+- Količina 0 ili 1 u GigaHubu ne znači da je dostupan: količina 1 je sumnjiva (vjerovatno rezervisano/ostećeno), pa se kupcu odgovara „trenutno nemamo na stanju”.
+- Dostupno za prodaju je samo kada GigaHub pokazuje količinu 2 ili više.
+- Stanje mora biti realtime, po istom principu kao kod giga.ba: keširano kratko, osvježeno u trenutku odgovora, bez opterećenja sajta.
+- Nikad se kupcu ne piše broj komada iz GigaHuba niti izvor podataka — samo „ima” ili „trenutno nemamo na stanju”.
+
+**R32 — Dostava se računa po tabeli težine (26.11.2026)**
+- Cijena dostave zavisi isključivo od ukupne težine paketa, po potvrđenoj tabeli: do 10 kg — 10 KM, do 20 kg — 12 KM, do 30 kg — 15 KM, do 40 kg — 25 KM, do 50 kg — 30 KM, do 60 kg — 40 KM, do 70 kg — 42 KM, do 80 kg — 45 KM, do 90 kg — 55 KM, do 100 kg — 60 KM.
+- Težina i dimenzije se ne procjenjuju: uzimaju se iz podataka proizvoda (dimenzije/težina iz GigaHuba). Ako težina nije unesena, ostavlja se praznina „dostava: ________ KM”.
+- Kod više proizvoda težine se sabiraju i dostava se plaća jednom za cijeli paket (R30).

@@ -103,6 +103,33 @@ Sve se pokreće i iz interfejsa: **Postavke → Katalog**. Testni uvoz sa 10
 proizvoda je uspješno prošao (0 grešaka – provjeren SKU, cijena, popust,
 dostupnost, 18 specifikacija na spravi za fitness, tačni URL-ovi proizvoda).
 
+### GigaHub: težina, dimenzije i stanje (R31, R32)
+
+GigaHub je mjerodavan za **stanje na stanju**, a iz njega dolaze i **težina** i
+**dimenzije** (dostava se računa po težini). Sinhronizacija je isključivo
+**čitanje** GigaHuba — ništa se na sajtu ne mijenja.
+
+```bash
+# U Chrome-u otvoriti GigaHub i prijaviti se, pa Chrome pokrenuti sa
+# --remote-debugging-port=9222 (profil je odvojen, npr. C:\Users\<ime>\.gigahub-profile)
+npm run gigahub:sync -- --limit 10 --dry   # proba: samo prikaži šta se čita
+npm run gigahub:sync -- --only 63713       # jedan artikal
+npm run gigahub:sync                       # svi proizvodi, nastavlja gdje je stao
+```
+
+Skript uzima `sku` proizvoda (= ID artikla na GigaHubu), otvara
+`https://gigahub.ba/article/<sku>` i upisuje:
+
+- `weightKg` i `dimensionsCm` u dodatne podatke proizvoda (agent ih i dalje može
+  ispraviti u **Proizvodi → Detalji**),
+- stanje u `availability` sa izvorom `gigahub` i brojem komada.
+
+Pravilo iz R31 se primjenjuje u kodu (`lib/domain/productVariants.ts`):
+**količina 2 ili više = ima**, **0 ili 1 = „trenutno nemamo na stanju”**.
+GigaHub stanje ima prednost i nad live provjerom giga.ba
+(`applyLiveState` ga ne prepisuje). Napredak se pamti u
+`backups/gigahub-progress.json`, pa se prekinuta sinhronizacija nastavlja.
+
 ## GigaHub narudžbe
 
 - **Postavke → GigaHub obrazac**: definišete polja, redoslijed i mapiranje

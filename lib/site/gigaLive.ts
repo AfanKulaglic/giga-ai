@@ -123,13 +123,16 @@ async function fetchLiveProduct(handle: string): Promise<LiveProductState | null
 export function applyLiveState(product: Product, live: LiveProductState): Product {
   const status: ProductAvailability['status'] =
     live.available === true ? 'in_stock' : live.available === false ? 'out_of_stock' : product.availability.status;
+  // R31: stanje iz GigaHuba ima prednost nad giga.ba — ne prepisujemo ga.
+  const gigahubWins = product.availability.source === 'gigahub' && product.availability.quantity != null;
   const availability: ProductAvailability = {
     ...product.availability,
-    status,
+    status: gigahubWins ? product.availability.status : status,
     checkedAt: live.checkedAt,
-    source: 'live:product.js',
-    raw:
-      live.available === true
+    source: gigahubWins ? 'gigahub' : 'live:product.js',
+    raw: gigahubWins
+      ? product.availability.raw
+      : live.available === true
         ? 'Provjereno na giga.ba: dostupno.'
         : live.available === false
           ? 'Provjereno na giga.ba: nije dostupno.'
