@@ -19,7 +19,7 @@ kupcima na **Instagramu i Facebooku** za [giga.ba](https://giga.ba).
   prijavljuje agentu umjesto da pogađa.
 - **Iznosi se računaju deterministički** u `lib/domain/calculator.ts` (cijeli
   centi), nikada kroz model.
-- **Sesije su izolovane** – kontekst jednog kupca se nikada ne miješa s drugim.
+- **Jedan razgovor, bez historije** – u radu je uvijek jedan kupac; dugme „Reset” briše trenutni razgovor i otvara prazan (nema liste starih sesija).
 - Interni podaci (napomene, upute, kalkulacija) **nikada** ne ulaze u poruku kupcu.
 
 ## Tehnološki stog
@@ -201,7 +201,7 @@ lib/config/     podrazumijevane postavke zrna + provjera env-a
 lib/store/      LocalStore (JSON) / FirestoreStore / RtdbStore (Realtime Database)
 worker/         radnik za katalog (gigaClient, sync, cli)
 app/api/        REST rute (sve autentificirano)
-app/            workspace (/), sesije (/sessions), postavke (/settings)
+app/            workspace (/), proizvodi (/products), pravila (/rules), postavke (/settings)
 tests/          vitest — deterministički dio sistema bez mreže
 ```
 

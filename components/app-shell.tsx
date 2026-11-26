@@ -9,11 +9,10 @@ import { Badge, Button, Spinner } from '@/components/ui/primitives';
 import { AIKeysPill } from '@/components/ai-keys-pill';
 import { AIUsagePill } from '@/components/ai-usage-pill';
 import { cn, initials } from '@/lib/utils';
-import { Boxes, CloudOff, LogOut, MessagesSquare, ScrollText, Settings2, Sparkles } from 'lucide-react';
+import { Boxes, CloudOff, LogOut, ScrollText, Settings2, Sparkles } from 'lucide-react';
 
 const NAV = [
   { href: '/', label: 'Radni prostor', icon: Sparkles },
-  { href: '/sessions', label: 'Sesije', icon: MessagesSquare },
   { href: '/products', label: 'Proizvodi', icon: Boxes },
   { href: '/rules', label: 'Pravila', icon: ScrollText },
   { href: '/settings', label: 'Postavke', icon: Settings2 },

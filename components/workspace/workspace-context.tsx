@@ -48,6 +48,11 @@ interface WorkspaceValue {
   renameSession: (label: string) => Promise<void>;
   setSessionStatus: (status: 'active' | 'archived') => Promise<void>;
   deleteSession: (id: string) => Promise<void>;
+  /**
+   * Reset razgovora: briše SVE sesije i otvara jedan prazan razgovor.
+   * Agent ne drži historiju — jedan kupac, jedan razgovor, jedan reset.
+   */
+  resetWorkspace: () => Promise<CustomerSession | null>;
 
   sendMessage: (content: string, senderType: SenderType) => Promise<ChatMessage>;
   deleteMessage: (messageId: string) => Promise<void>;
@@ -236,6 +241,36 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     },
     [activeSessionId, refreshBootstrap],
   );
+
+  const resetWorkspace = React.useCallback(async () => {
+    // Svjeza lista sa servera: stanje u memoriji moze biti staro (npr. sesija
+    // otvorena u drugoj kartici), pa bi neki razgovori ostali u bazi.
+    let ids = (bootstrap?.sessions ?? []).map((session) => session.id);
+    try {
+      const fresh = await apiFetch<{ sessions: CustomerSession[] }>('/api/bootstrap');
+      ids = (fresh.sessions ?? []).map((session) => session.id);
+    } catch {
+      // Ako bootstrap ne radi, koristimo ono sto imamo.
+    }
+    for (const id of ids) {
+      try {
+        await apiFetch(`/api/sessions/${id}`, { method: 'DELETE' });
+      } catch {
+        // Sesija je već obrisana (npr. u drugoj kartici) — nastavljamo dalje.
+      }
+    }
+    setActiveSessionId(null);
+    setDetail(null);
+    setReplyNotes([]);
+    setManualDiscount(null);
+    const data = await apiFetch<{ session: CustomerSession }>('/api/sessions', {
+      method: 'POST',
+      body: JSON.stringify({ label: 'Novi razgovor' }),
+    });
+    await refreshBootstrap();
+    await openSession(data.session.id);
+    return data.session;
+  }, [bootstrap, openSession, refreshBootstrap]);
 
   const sendMessage = React.useCallback(
     async (content: string, senderType: SenderType) => {
@@ -603,6 +638,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     renameSession,
     setSessionStatus,
     deleteSession,
+    resetWorkspace,
     sendMessage,
     deleteMessage,
     deleteTurn,

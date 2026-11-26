@@ -7,6 +7,7 @@ import {
   BookOpen,
   Bot,
   Check,
+  CornerUpLeft,
   ExternalLink,
   Minus,
   Package,
@@ -420,8 +421,28 @@ export function AssistantPanel() {
       </div>
 
       <div className="border-t bg-surface/60 px-3 pb-2.5 pt-2">
-        {/* Upute koje se najčešće koriste: jedan klik i poruka je u polju. */}
-        <div className="scrollbar-thin -mx-1 mb-1.5 flex gap-1 overflow-x-auto px-1 pb-0.5">
+        {/* Glavna radnja u radu: pošalji asistentu „odgovori” jednim klikom. */}
+        <div className="mb-1.5 flex items-center gap-1.5">
+          <Button
+            variant="primary"
+            size="sm"
+            className="h-7 shrink-0 gap-1 rounded-full px-2.5 text-[11.5px]"
+            onClick={async () => {
+              if (!detail) return;
+              try {
+                await askAssistant('odgovori');
+              } catch (err) {
+                toast({ title: 'AI nije odgovorio', description: (err as Error).message, tone: 'error' });
+              }
+            }}
+            loading={aiBusy}
+            disabled={!aiConfigured}
+            title="Pošalji asistentu „odgovori” — sastavi odgovor na zadnju poruku kupca"
+          >
+            <CornerUpLeft className="h-3.5 w-3.5" /> Odgovori
+          </Button>
+          {/* Upute koje se najčešće koriste: jedan klik i poruka je u polju. */}
+          <div className="scrollbar-thin -mx-1 flex min-w-0 flex-1 gap-1 overflow-x-auto px-1 pb-0.5">
           {[...myPresets, ...BUILTIN_PRESETS.filter((preset) => !myPresets.includes(preset))].map((preset) => (
             <button
               key={preset}
@@ -453,6 +474,7 @@ export function AssistantPanel() {
               + sačuvaj uputu
             </button>
           ) : null}
+          </div>
         </div>
         <div className="flex items-end gap-1.5 rounded-xl border bg-background p-1.5 shadow-[0_1px_2px_rgba(0,0,0,.04)] focus-within:border-ring/50">
           <Textarea
