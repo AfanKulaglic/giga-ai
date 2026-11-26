@@ -339,6 +339,20 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
     }
   }
 
+  // R12: ni grad se ne izmislja — kupcev grad ide iz kupceve poruke.
+  const cityInReply = /\(\s*([A-ZČĆŠŽĐ][\p{L}đĐ-]{2,20}(?:\s[A-ZČĆŠŽĐ][\p{L}đĐ-]{2,20})?)\s*(?:,\s*\d{1,5})?\s*\)/u.exec(text);
+  if (cityInReply) {
+    const customerText = ctx.customerMessage ?? '';
+    const named = customerText.toLowerCase().includes(cityInReply[1]!.toLowerCase());
+    if (!named) {
+      issues.push({
+        code: 'invented_city',
+        hint: `Ukloni „${cityInReply[0]}”. Grad i poštanski broj traži od kupca, ne navodi ih sam.`,
+        message: `Odgovor sadrži grad koji kupac nije dao: ${cityInReply[1]}.`,
+      });
+    }
+  }
+
   // R28: procenat smije biti samo onaj koji je vlasnik podesio u Postavkama.
   // R26 + potpunost: kad je kupac pitao šta imamo, svaka stavka iz ponude
   // mora biti u odgovoru. Preskočena stavka = kupcu se nudi manje nego što ima.
@@ -664,6 +678,15 @@ Akcija traje do isteka zaliha.`;
       .replace(/\n{3,}/g, '\n')
       .trim();
   }
+  if (codes.has('invented_city')) {
+    text = text
+      .replace(/(adres[ua]|adresa|grad|mjesto|po[šs]tanski\s+broj)\s*\([^)]{0,40}\)\s*,?/giu, '$1')
+      .replace(/\s*\(\s*[A-ZČĆŠŽĐ][\p{L}đĐ-]{2,20}(?:\s[A-ZČĆŠŽĐ][\p{L}đĐ-]{2,20})?\s*(?:,\s*\d{1,5})?\s*\)/gu, '')
+      .replace(/\(\s*\)/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+
   if (codes.has('invented_postal_code')) {
     // R12: izmišljeni grad i poštanski broj se uklanjaju, ostaje standardni zahtjev.
     text = text
