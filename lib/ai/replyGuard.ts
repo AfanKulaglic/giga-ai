@@ -82,9 +82,12 @@ const MONEY_IN_TEXT = /\d[\d.\s]*(?:[.,]\d{1,2})?\s*(?:KM|BAM)/i;
 // R27: popust na količinu nije objavljen nigdje na sajtu — ne smije se izmisliti.
 const QUANTITY_DISCOUNT =
   /(\d+\s*komada|kolicin\w*|količin\w*|dva\s+komada|drugi\s+komad)[^.\n]{0,60}\d{1,2}\s*%|\d{1,2}\s*%\s*(popusta\s+)?(na|za)\s+kolicin\w*|\d{1,2}\s*%\s*(popusta\s+)?(na|za)\s+količin\w*/i;
-// R24: kupcu se nikad ne objašnjava da težina nedostaje — samo praznina.
+// R24: kupcu se nikad ne objasnjava da tezina nedostaje — samo praznina.
+// Svako spominjanje tezine (kg) ili nase unutrasnje baze ide kupcu kao greska.
 const WEIGHT_DISCLOSURE =
-  /(te[žz]in\w*|kila[žz]\w*)[^.!?\n]{0,80}(nije\s+unes|nijesu\s+unes|nemamo|nedostaje|nepoznat)|(ne\s+mo[žz]emo\s+(izračunati|izracunati)|ne\s+znamo\s+(cijenu\s+)?dostav|dostav\w*\s+(ćemo|cemo)\s+(vam\s+)?javiti|iznos\s+dostave\s+će(te|mo))/i;
+  /(te[žz]in\w*|kila[žz]\w*)|\b\d+[.,]?\d*\s*kg\b|(nije|nijesu|nisu)\s+(une[st]sen\w*|dostupn\w*\s+u\s+na[šs]\w*\s+sistem)|u\s+na[šs]\w*\s+sistem\w*|ne\s+mo[žz]emo\s+(izračunati|izracunati)|ne\s+znamo\s+(cijenu\s+)?dostav|iznos\s+dostave\s+će(te|mo)/i;
+// R12: postanski broj smije doci samo iz tabele ili od kupca, nikad izmisljen.
+const POSTAL_CODE = /\b7\d{4}\b/g;
 // R26: rečenica koja tvrdi da imamo nešto (za proizvode koji nisu na stanju).
 const normalize = (value: string): string => value.toLowerCase().replace(/[^a-z0-9čćžšđ ]/gi, '');
 const CLAIM_HAVE = /(imamo|dostupn|na\s+stanju|mo[žz]ete\s+naru[čc]iti)/i;
@@ -316,6 +319,20 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
       hint: 'Obriši svaku rečenicu o težini i o tome da dostava nije poznata. Ostavi samo „dostava: ________ KM” uz cijenu.',
       message: 'Kupcu se ne smije pisati da težina/dostava nedostaje — samo praznina.',
     });
+  }
+
+  // R12: poštanski broj se ne izmišlja — samo iz tabele ili iz kupčeve poruke.
+  const postalInReply = text.match(POSTAL_CODE) ?? [];
+  if (postalInReply.length) {
+    const fromCustomer = new Set((ctx.customerMessage ?? '').match(POSTAL_CODE) ?? []);
+    const invented = postalInReply.filter((code) => !fromCustomer.has(code));
+    if (invented.length) {
+      issues.push({
+        code: 'invented_postal_code',
+        hint: 'Ukloni izmišljeni grad i poštanski broj. Traži samo: ime i prezime, telefon, adresa, grad i poštanski broj.',
+        message: `Odgovor sadrži poštanski broj koji kupac nije dao: ${invented.join(', ')}.`,
+      });
+    }
   }
 
   // R28: procenat smije biti samo onaj koji je vlasnik podesio u Postavkama.
@@ -641,6 +658,14 @@ Akcija traje do isteka zaliha.`;
       .filter((sentence) => !WEIGHT_DISCLOSURE.test(sentence))
       .join(' ')
       .replace(/\n{3,}/g, '\n')
+      .trim();
+  }
+  if (codes.has('invented_postal_code')) {
+    // R12: izmišljeni grad i poštanski broj se uklanjaju, ostaje standardni zahtjev.
+    text = text
+      .replace(/grad\s+[A-ZČĆŠŽĐ][\p{L}]+\s+i\s+po[šs]tanski\s+broj\s+7\d{4}/giu, 'grad i poštanski broj')
+      .replace(/\b7\d{4}\b/g, '')
+      .replace(/\s{2,}/g, ' ')
       .trim();
   }
   if (codes.has('unavailable_product_offered')) {

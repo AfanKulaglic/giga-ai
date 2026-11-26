@@ -14,6 +14,7 @@ import type {
 } from '@/lib/domain/types';
 import { emptySessionContext, normalizeSessionContext } from '@/lib/domain/sessionContext';
 import { searchProductCatalog } from '@/lib/domain/productSearch';
+import { mergeOperationalState } from '@/lib/domain/productMerge';
 import { defaultProcedures, defaultQuickReplies, defaultSettings } from '@/lib/config/defaults';
 import { serverEnv } from '@/lib/config/env';
 import type {
@@ -453,11 +454,11 @@ export class RtdbStore implements Store {
           result.created++;
           continue;
         }
-        const same = JSON.stringify(clean(previous)) === JSON.stringify(clean(product));
+        const same = JSON.stringify(clean(previous)) === JSON.stringify(clean(mergeOperationalState(previous, product)));
         if (same) {
           result.unchanged++;
         } else {
-          await this.writeValue(`${P.products}/${product.id}`, product);
+          await this.writeValue(`${P.products}/${product.id}`, mergeOperationalState(previous, product));
           result.updated++;
         }
       } catch (err) {

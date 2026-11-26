@@ -30,6 +30,8 @@ interface Found {
   weightKg: number | null;
   dimensionsCm: { lengthCm: number | null; widthCm: number | null; heightCm: number | null } | null;
   quantity: number | null;
+  /** Prodavnica navodi da se artikal moze naruciti, ali ne pise koliko komada. */
+  availableUnquantified: boolean;
   fiscalCode: string | null;
   notFound: boolean;
 }
@@ -71,7 +73,15 @@ async function readArticle(page: import('puppeteer-core').Page, sku: string): Pr
   const finalUrl = page.url();
   if (/\/login/i.test(finalUrl)) throw new Error('GigaHub trazi prijavu — prijavite se u Chrome prozoru.');
   if (!response || response.status() >= 400) {
-    return { name: '', weightKg: null, dimensionsCm: null, quantity: null, fiscalCode: null, notFound: true };
+    return {
+      name: '',
+      weightKg: null,
+      dimensionsCm: null,
+      quantity: null,
+      availableUnquantified: false,
+      fiscalCode: null,
+      notFound: true,
+    };
   }
   const lines = (await page.evaluate(() => document.body.innerText)) as string;
   const list = lines
@@ -109,12 +119,24 @@ async function readArticle(page: import('puppeteer-core').Page, sku: string): Pr
       if (numbers.length) quantity = numbers.reduce((sum, value) => sum + value, 0);
     }
   }
+  // Neki artikli nemaju broj komada, nego samo "Dostupnost: Prodavnica …"
+  // uz napomenu da se mogu naruciti/preuzeti — to je dostupno, bez broja.
+  const availabilityBlock = list.slice(
+    Math.max(0, list.findIndex((line) => /^Dostupnost/i.test(line))),
+    list.findIndex((line) => /^Dostupnost/i.test(line)) + 6,
+  );
+  const availableUnquantified =
+    quantity === null &&
+    availabilityBlock.length > 0 &&
+    availabilityBlock.some((line) => /Prodavnica|moguće naručiti|moguce naruciti|preuzeti/i.test(line)) &&
+    !availabilityBlock.some((line) => /rasprodan|nema na stanju|nije dostupno/i.test(line));
 
   return {
     name,
     weightKg,
     dimensionsCm,
     quantity,
+    availableUnquantified,
     fiscalCode: after(list, /^Sifra u kasi/i),
     notFound: false,
   };
@@ -163,22 +185,29 @@ async function main() {
   console.log(`Za obradu: ${targets.length}${dry ? ' (probni rezim, bez upisa)' : ''}`);
 
   const browser = await puppeteer.connect({ browserURL: CDP_URL, defaultViewport: null });
-  const page = await browser.newPage();
-  page.setDefaultTimeout(60000);
+  const workers = Math.max(1, Math.min(4, Number(process.env.GIGAHUB_CONCURRENCY ?? 3)));
+  const pages = await Promise.all(
+    Array.from({ length: workers }, async () => {
+      const created = await browser.newPage();
+      created.setDefaultTimeout(60000);
+      return created;
+    }),
+  );
 
   let done = 0;
   let updated = 0;
   let missing = 0;
-  for (const product of targets) {
+  let cursor = 0;
+  let stopped = false;
+
+  const handle = async (page: import('puppeteer-core').Page, product: { id: string; name: string; sku?: string | null }) => {
     const sku = product.sku!;
     let found: Found | null = null;
     try {
       found = await readArticle(page, sku);
     } catch (error) {
+      stopped = true;
       console.log(`STOP: ${(error as Error).message}`);
-      await browser.disconnect();
-      saveProgress(progress);
-      process.exitCode = 1;
       return;
     }
     done += 1;
@@ -188,7 +217,14 @@ async function main() {
     } else {
       updated += 1;
       progress[product.id] = new Date().toISOString();
-      const stockStatus = found.quantity !== null && found.quantity >= 2 ? 'in_stock' : 'out_of_stock';
+      const stockStatus =
+        found.quantity !== null
+          ? found.quantity >= 2
+            ? 'in_stock'
+            : 'out_of_stock'
+          : found.availableUnquantified
+            ? 'in_stock'
+            : 'out_of_stock';
       if (!dry) {
         if (found.weightKg !== null || found.dimensionsCm) {
           const existing = (await db.ref(`giga_additional/${product.id}`).get()).val() as
@@ -205,13 +241,18 @@ async function main() {
         }
         await db.ref(`giga_products/${product.id}/availability`).set({
           status: stockStatus,
-          raw: found.quantity === null ? 'GigaHub: bez podatka' : `GigaHub: ${found.quantity} kom`,
+          raw:
+            found.quantity === null
+              ? found.availableUnquantified
+                ? 'GigaHub: dostupno u prodavnici'
+                : 'GigaHub: bez podatka'
+              : `GigaHub: ${found.quantity} kom`,
           checkedAt: new Date().toISOString(),
           source: 'gigahub',
           quantity: found.quantity,
         });
       }
-      if (done <= 5 || dry) {
+      if (dry) {
         console.log(
           `${sku} | ${found.name.slice(0, 44)} | ${found.weightKg ?? '-'} kg | ` +
             `${found.dimensionsCm ? `${found.dimensionsCm.widthCm}x${found.dimensionsCm.lengthCm}x${found.dimensionsCm.heightCm}` : '-'} | ` +
@@ -219,14 +260,25 @@ async function main() {
         );
       }
     }
-    if (done % 25 === 0) {
+    if (done % 50 === 0) {
       saveProgress(progress);
       console.log(`... ${done}/${targets.length} (${updated} sa podacima, ${missing} nema)`);
     }
-    await new Promise((resolve) => setTimeout(resolve, GAP_MS));
-  }
+  };
+
+  const runWorker = async (page: import('puppeteer-core').Page) => {
+    while (!stopped) {
+      const product = targets[cursor];
+      cursor += 1;
+      if (!product) return;
+      await handle(page, product);
+      await new Promise((resolve) => setTimeout(resolve, GAP_MS));
+    }
+  };
+
+  await Promise.all(pages.map((page) => runWorker(page)));
   saveProgress(progress);
-  await page.close();
+  await Promise.all(pages.map((page) => page.close().catch(() => undefined)));
   await browser.disconnect();
   console.log(`Gotovo: ${done} obradjeno, ${updated} sa podacima, ${missing} nije nadjeno.`);
 }

@@ -9,6 +9,7 @@ import {
 import { expandTokens, identifyProduct, searchProductCatalog } from '@/lib/domain/productSearch';
 import { applyLiveState, handleFromUrl, liveCheckNotes, parseLiveProduct } from '@/lib/site/gigaLive';
 import { isAvailable } from '@/lib/domain/productVariants';
+import { mergeOperationalState } from '@/lib/domain/productMerge';
 
 const raw = (overrides: Partial<ShopifyProduct> = {}): ShopifyProduct => ({
   id: 9001,
@@ -243,5 +244,28 @@ describe('GigaHub stanje (R31)', () => {
     expect(next.availability.source).toBe('gigahub');
     expect(next.availability.status).toBe('in_stock');
     expect(isAvailable(next)).toBe(false);
+  });
+});
+
+describe('Osvjezavanje kataloga ne gazi GigaHub stanje', () => {
+  const base = () => normalizeShopifyProduct(raw(), { now: '2026-01-01T00:00:00.000Z' }).product;
+
+  it('zadrzava gigahub stanje iz prethodne verzije proizvoda', () => {
+    const previous = {
+      ...base(),
+      availability: { status: 'out_of_stock' as const, raw: 'GigaHub: 0 kom', checkedAt: '2026-11-26T00:00:00.000Z', source: 'gigahub' as const, quantity: 0 },
+    };
+    const incoming = { ...base(), price: 999, availability: { status: 'in_stock' as const, raw: null, checkedAt: '2026-11-27T00:00:00.000Z', source: 'products.json' as const } };
+    const merged = mergeOperationalState(previous, incoming);
+    expect(merged.price).toBe(999);
+    expect(merged.availability.source).toBe('gigahub');
+    expect(merged.availability.status).toBe('out_of_stock');
+    expect(isAvailable(merged)).toBe(false);
+  });
+
+  it('obican katalog ostaje kakav jeste', () => {
+    const previous = base();
+    const incoming = { ...base(), price: 500 };
+    expect(mergeOperationalState(previous, incoming).availability.source).toBe('products.json');
   });
 });

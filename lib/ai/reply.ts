@@ -432,9 +432,9 @@ export async function generateCustomerReply(args: {
     (rule) => rule.enabled && rule.type === 'quantity' && (rule.percent ?? 0) > 0 && (rule.minQuantity ?? 0) > 1,
   );
   const quantityBlock = qtyRules.length
-    ? `POPUST NA KOLIČINU (samo isti proizvod, nikad različiti): ${qtyRules
+    ? `POPUST NA KOLIČINU (samo isti proizvod — ista boja i iste dimenzije, nikad različiti): ${qtyRules
         .map((rule) => `${rule.minQuantity} kom → ${rule.percent}%`)
-        .join('; ')}. Primer: 2 iste stolice = 5%, ali 2 različite stolice = bez popusta. Ako je u narudžbi više različitih proizvoda a jedan je naručen više puta, popust važi samo za taj proizvod. Uvijek se primjenjuje najviši dostignuti prag; procente nikad ne mijenjaj ni ne izmišljaj (R28).`
+        .join('; ')}. Primer: 2 iste stolice iste boje = 5%, ali 2 različite stolice ili 2 boje = bez popusta. Ako je u narudžbi više različitih proizvoda a jedan je naručen više puta, popust važi samo za taj proizvod. Uvijek se primjenjuje najviši dostignuti prag; procente nikad ne mijenjaj ni ne izmišljaj (R28). R33: kada kupac traži dva ili više proizvoda, popust se MORA spomenuti u istoj poruci — nikad se ne čeka da kupac pita.`
     : 'POPUST NA KOLIČINU: nije podešen. Ne nudi nikakav popust na količinu (R28).';
 
   const typoPairs = findTypos(lastCustomerMessage?.content ?? '', confirmedProducts.map(({ product }) => product));
@@ -644,17 +644,24 @@ ${names}`,
       .filter((word) => word.length >= 4);
     // Samo najbolje poklapanje: kupac koji pita za jedan adapter ne dobija
     // spisak svih adaptera kojih trenutno nema.
+    const scoreFor = (name: string) => {
+      const nameWords = name
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .split(/\s+/)
+        .filter((word) => word.length >= 3);
+      const hits = askedWords.filter((word) => nameWords.some((nameWord) => nameWord.startsWith(word.slice(0, 5)))).length;
+      return { hits, score: nameWords.length ? hits / nameWords.length : 0 };
+    };
+    const bestAvailable = Math.max(
+      0,
+      ...confirmedProducts
+        .filter(({ product }) => isAvailable(product))
+        .map(({ product }) => scoreFor(product.name).score),
+    );
     const scored = notAvailable
-      .map(({ product }) => {
-        const nameWords = product.name
-          .toLowerCase()
-          .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-          .split(/\s+/)
-          .filter((word) => word.length >= 3);
-        const hits = askedWords.filter((word) => nameWords.some((nameWord) => nameWord.startsWith(word.slice(0, 5)))).length;
-        return { name: product.name, hits, score: nameWords.length ? hits / nameWords.length : 0 };
-      })
-      .filter((entry) => entry.hits >= 2)
+      .map(({ product }) => ({ name: product.name, ...scoreFor(product.name) }))
+      .filter((entry) => entry.hits >= 2 && entry.score > bestAvailable)
       .sort((a, b) => b.score - a.score);
     const askedUnavailable = scored.filter((entry) => entry.score === scored[0]?.score).map((entry) => entry.name);
     if (askedUnavailable.length && !/nemamo|nema na stanju|nije na stanju|nije dostupno/i.test(body)) {

@@ -224,3 +224,11 @@ Napomene za uređivanje:
 - Cijena dostave zavisi isključivo od ukupne težine paketa, po potvrđenoj tabeli: do 10 kg — 10 KM, do 20 kg — 12 KM, do 30 kg — 15 KM, do 40 kg — 25 KM, do 50 kg — 30 KM, do 60 kg — 40 KM, do 70 kg — 42 KM, do 80 kg — 45 KM, do 90 kg — 55 KM, do 100 kg — 60 KM.
 - Težina i dimenzije se ne procjenjuju: uzimaju se iz podataka proizvoda (dimenzije/težina iz GigaHuba). Ako težina nije unesena, ostavlja se praznina „dostava: ________ KM”.
 - Kod više proizvoda težine se sabiraju i dostava se plaća jednom za cijeli paket (R30).
+
+**R33 — Popust na količinu se uvijek saopći kupcu (26.11.2026)**
+- Kada kupac traži **dva ili više proizvoda**, asistent u istoj poruci uvijek navede i popust na količinu — ne čeka da kupac pita.
+- Popust važi **samo za iste proizvode — ista šifra, ista boja i iste dimenzije**. Dva različita proizvoda, dvije boje ili dvije dimenzije ne spajaju se u popust.
+- Potvrđeni pragovi: **2 ista proizvoda → 5%**, **5 istih → 7%**, **10 istih → 10%**.
+- U poruci se popust piše imenom i iznosom, npr. „Popust (2 ista proizvoda — 5%): -13,00 KM”, a zatim „Nakon popusta: …” i ukupno za plaćanje.
+- Cijene i popust računa isključivo kalkulator u aplikaciji iz pragova u Postavkama; asistent nikad ne računa sam i nikad ne izmišlja drugi procenat (R17, R28).
+- Ako kupac traži manje od 2 ista proizvoda, popust se ne spominje kao da ga ima.

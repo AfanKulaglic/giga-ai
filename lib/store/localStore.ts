@@ -16,6 +16,7 @@ import type {
 } from '@/lib/domain/types';
 import { emptySessionContext, normalizeSessionContext } from '@/lib/domain/sessionContext';
 import { searchProductCatalog } from '@/lib/domain/productSearch';
+import { mergeOperationalState } from '@/lib/domain/productMerge';
 import { defaultProcedures, defaultQuickReplies, defaultSettings } from '@/lib/config/defaults';
 import type {
   AuditLogEntry,
@@ -359,7 +360,7 @@ export class LocalStore implements Store {
           this.db.products[product.id] = {
             ...existing,
             scrapedAt: product.scrapedAt,
-            availability: product.availability,
+            availability: mergeOperationalState(existing, product).availability,
             lastValidScrapeAt: product.scrapedAt,
             extractionStatus: product.extractionStatus,
             missingFields: product.missingFields,
@@ -367,7 +368,7 @@ export class LocalStore implements Store {
           };
           result.unchanged++;
         } else {
-          this.db.products[product.id] = { ...product, lastValidScrapeAt: product.scrapedAt };
+          this.db.products[product.id] = { ...mergeOperationalState(existing, product), lastValidScrapeAt: product.scrapedAt };
           result.updated++;
         }
       } catch (err) {
