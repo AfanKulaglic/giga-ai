@@ -54,10 +54,29 @@ export interface AIUsageSummary {
   resetInMinutes: number;
 }
 
-/** Groq (and most providers) reset daily counters at 00:00 UTC. */
-function nextUtcMidnight(): Date {
+/**
+ * Google broji dnevnu kvotu (RPD) po projektu i resetuje je u ponoc po
+ * pacifickom vremenu (America/Los_Angeles), sto je 09:00 po nasem vremenu —
+ * ne u 00:00 UTC. Bez ovoga aplikacija pokazuje pogresan trenutak resetovanja.
+ */
+function nextProviderReset(): Date {
   const now = new Date();
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
+  const read = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+  // Koliko je sati proslo od ponoci po pacifickom vremenu.
+  const elapsedMs =
+    ((read('hour') % 24) * 3600 + read('minute') * 60 + read('second')) * 1000;
+  const msUntilMidnight = 24 * 3600 * 1000 - elapsedMs;
+  return new Date(now.getTime() + msUntilMidnight);
 }
 
 export async function recordAIUsage(usage: {
@@ -102,8 +121,8 @@ export async function getTodayAIUsage(): Promise<AIUsageSummary> {
     model: serverEnv.ai.model,
     estimatedCostUsd: 0,
     byModel: [],
-    resetAt: nextUtcMidnight().toISOString(),
-    resetInMinutes: Math.max(0, Math.round((nextUtcMidnight().getTime() - Date.now()) / 60000)),
+    resetAt: nextProviderReset().toISOString(),
+    resetInMinutes: Math.max(0, Math.round((nextProviderReset().getTime() - Date.now()) / 60000)),
   };
 
   try {

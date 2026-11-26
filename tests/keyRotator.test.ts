@@ -31,10 +31,12 @@ describe('rotacija AI ključeva', () => {
     expect(picked.retryInMs).toBe(26_000);
   });
 
-  it('dnevni limit drži ključ do ponoći, minutni samo minut', () => {
+  it('dnevni limit drži ključ do ponoći po pacifičkom vremenu, minutni samo minut', () => {
+    // 22.11.2026. 10:00 UTC = 02:00 po pacifičkom vremenu (PST, UTC-8),
+    // pa je sljedeća ponoć 23.11. u 08:00 UTC = 09:00 kod nas.
     const at = Date.parse('2026-11-22T10:00:00.000Z');
     const daily = cooldownForRateLimit('You exceeded your current quota per day', null, at);
-    expect(daily).toBe(Date.parse('2026-11-23T00:00:00.000Z') - at);
+    expect(daily).toBe(Date.parse('2026-11-23T08:00:00.000Z') - at);
     expect(cooldownForRateLimit('rate limited', 20, at)).toBe(20_000);
     expect(cooldownForRateLimit('rate limited', null, at)).toBe(60_000);
   });

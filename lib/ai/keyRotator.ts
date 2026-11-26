@@ -118,9 +118,17 @@ export function createKeyRotator(keys: string[], options: { now?: () => number }
 export function cooldownForRateLimit(body: string, retryAfterSeconds: number | null, at = Date.now()): number {
   const daily = /per\s*day|daily|per-day|quota|billing|exceeded your current quota|insufficient_quota/i.test(body);
   if (daily) {
-    const nextMidnight = new Date(at);
-    nextMidnight.setUTCHours(24, 0, 0, 0);
-    return Math.max(MINUTE, nextMidnight.getTime() - at);
+    // Google resetuje dnevnu kvotu u ponoc po pacifickom vremenu (09:00 kod nas).
+    const pacific = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Los_Angeles',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    }).formatToParts(new Date(at));
+    const read = (type: string) => Number(pacific.find((part) => part.type === type)?.value ?? 0);
+    const elapsedMs = ((read('hour') % 24) * 3600 + read('minute') * 60 + read('second')) * 1000;
+    return Math.max(MINUTE, 24 * 3600 * 1000 - elapsedMs);
   }
   const seconds = Number.isFinite(retryAfterSeconds) && retryAfterSeconds ? retryAfterSeconds : 60;
   return Math.max(5_000, seconds * 1000);
