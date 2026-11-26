@@ -86,18 +86,32 @@ describe('obračun paketa (R30)', () => {
     expect(packageTotalsText(quote!)).toContain('Popust');
   });
 
-  it('bez kilaže dostava je praznina, a ne izmišljen iznos', () => {
+  it('bez kilaže i bez podrazumijevane težine dostava ostaje praznina', () => {
     const quote = buildPackageQuote(
       [
         { productId: 'p1', name: 'AURA KOMODA', unitPrice: 130, quantity: 1, weightKg: null },
         { productId: 'p2', name: 'PULSAR KOMODA', unitPrice: 200, quantity: 1, weightKg: 10 },
       ],
-      config,
+      { ...config, fallbackWeightKg: null },
     );
     expect(quote!.deliveryAmount).toBeNull();
     expect(quote!.total).toBeNull();
     expect(quote!.missingWeights).toEqual(['AURA KOMODA']);
     expect(packageTotalsText(quote!)).toContain('________ KM');
+  });
+
+  it('R34: bez kilaže koristi se podrazumijevana težina iz Postavki', () => {
+    const quote = buildPackageQuote(
+      [
+        { productId: 'p1', name: 'AURA KOMODA', unitPrice: 130, quantity: 1, weightKg: null },
+        { productId: 'p2', name: 'PULSAR KOMODA', unitPrice: 200, quantity: 1, weightKg: 10 },
+      ],
+      { ...config, fallbackWeightKg: 1 },
+    );
+    // 1 kg podrazumijevano + 10 kg stvarno = 11 kg -> tarifa do 20 kg = 10 KM.
+    expect(quote!.deliveryAmount).toBe(10);
+    expect(quote!.total).toBe(340);
+    expect(quote!.missingWeights).toEqual([]);
   });
 
   it('jedan komad ne pravi blok ukupnog iznosa', () => {
