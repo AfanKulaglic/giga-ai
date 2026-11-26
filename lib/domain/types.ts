@@ -303,6 +303,8 @@ export interface CalculatorConfig {
   /** Weight bands used by `by_weight` delivery rules. */
   weightTiers: WeightTier[];
   discountRules: DiscountRule[];
+  /** Kada artikal nema tezinu u podacima, kalkulator koristi ovu (kg). */
+  fallbackWeightKg?: number | null;
   /** Set when the agent wants delivery calculated manually. */
   deliveryPolicy: 'rules' | 'on_request';
   updatedAt: string;

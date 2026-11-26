@@ -202,6 +202,7 @@ export function defaultCalculatorConfig(): CalculatorConfig {
     // No delivery pricing was supplied, so nothing is invented: the calculator
     // asks for manual confirmation instead of charging an invented amount.
     deliveryPolicy: 'rules',
+    fallbackWeightKg: 1,
     updatedAt: new Date(0).toISOString(),
   };
 }

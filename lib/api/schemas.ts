@@ -195,6 +195,7 @@ export const settingsSchema = z.object({
     deliveryPolicy: z.enum(['rules', 'on_request']),
     deliveryRules: z.array(deliveryRuleSchema).max(50),
     weightTiers: z.array(weightTierSchema).max(30).default([]),
+    fallbackWeightKg: z.number().positive().max(500).nullable().optional(),
     discountRules: z.array(discountRuleSchema).max(100),
     updatedAt: z.string(),
   }),

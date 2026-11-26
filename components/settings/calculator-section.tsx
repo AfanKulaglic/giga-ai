@@ -278,6 +278,31 @@ export function CalculatorSection() {
               >
                 <Plus className="h-3.5 w-3.5" /> Dodaj tarifu
               </Button>
+
+              {/* R34: artikli bez tezine ne smiju ostaviti dostavu praznom. */}
+              <div className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-muted/30 px-2.5 py-1.5">
+                <div className="text-[11px] leading-tight text-muted-foreground">
+                  Ako artikal nema tezinu, koristi
+                  <br />
+                  <span className="text-[10px]">(dostava se racuna po tabeli)</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Input
+                    className="h-7 w-16 text-right"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={calc.fallbackWeightKg ?? ''}
+                    onChange={(event) =>
+                      update((prev) => ({
+                        ...prev,
+                        fallbackWeightKg: event.target.value === '' ? null : Number(event.target.value),
+                      }))
+                    }
+                  />
+                  <span className="text-[11px] text-muted-foreground">kg</span>
+                </div>
+              </div>
             </div>
 
             <Button

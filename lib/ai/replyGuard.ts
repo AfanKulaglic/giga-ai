@@ -46,6 +46,8 @@ export interface ReplyGuardContext {
   packageQuote?: PackageQuote | null;
   /** Real specifications from catalogue + agent data, for R22 step 1. */
   specPairs?: { label: string; value: string }[];
+  /** Postavke imaju podrazumijevanu tezinu, pa praznina za dostavu nije potrebna. */
+  deliveryFallback?: boolean;
 }
 
 export interface ReplyGuardIssue {
@@ -118,9 +120,11 @@ export function checkCustomerReply(body: string, ctx: ReplyGuardContext): ReplyG
   if (!text) return issues;
   const products = ctx.products;
 
-  const missingWeight = ctx.products.filter(
-    ({ additional }) => typeof additional?.weightKg !== 'number' || (additional?.weightKg ?? 0) <= 0,
-  );
+  const missingWeight = ctx.deliveryFallback
+    ? []
+    : ctx.products.filter(
+        ({ additional }) => typeof additional?.weightKg !== 'number' || (additional?.weightKg ?? 0) <= 0,
+      );
   const missingDims = ctx.products.filter(({ additional }) => !additional?.dimensionsCm);
 
   if (ctx.products.length && DENIAL.test(text)) {
@@ -665,6 +669,8 @@ Akcija traje do isteka zaliha.`;
     text = text
       .replace(/grad\s+[A-ZČĆŠŽĐ][\p{L}]+\s+i\s+po[šs]tanski\s+broj\s+7\d{4}/giu, 'grad i poštanski broj')
       .replace(/\b7\d{4}\b/g, '')
+      .replace(/grad\s*\((?:[^)]{1,24})\)/giu, 'grad')
+      .replace(/\(\s*\)/g, '')
       .replace(/\s{2,}/g, ' ')
       .trim();
   }
@@ -745,9 +751,11 @@ export function buildSafeReply(ctx: ReplyGuardContext): string {
   const sizes = (ctx.dimensionOptions ?? []).find(
     (group) => group.options.filter((option) => option.available).length >= 2,
   );
-  const missingWeight = ctx.products.some(
-    ({ additional }) => typeof additional?.weightKg !== 'number' || (additional?.weightKg ?? 0) <= 0,
-  );
+  const missingWeight =
+    !ctx.deliveryFallback &&
+    ctx.products.some(
+      ({ additional }) => typeof additional?.weightKg !== 'number' || (additional?.weightKg ?? 0) <= 0,
+    );
   const actionLine = ASKS_ACTION.test(ctx.customerMessage) ? ['Akcija traje do isteka zaliha.', ''] : [];
   const specLine = (() => {
     const seen = new Set<string>();

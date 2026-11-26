@@ -232,3 +232,9 @@ Napomene za uređivanje:
 - U poruci se popust piše imenom i iznosom, npr. „Popust (2 ista proizvoda — 5%): -13,00 KM”, a zatim „Nakon popusta: …” i ukupno za plaćanje.
 - Cijene i popust računa isključivo kalkulator u aplikaciji iz pragova u Postavkama; asistent nikad ne računa sam i nikad ne izmišlja drugi procenat (R17, R28).
 - Ako kupac traži manje od 2 ista proizvoda, popust se ne spominje kao da ga ima.
+
+**R34 — Dostava se uvijek navodi sa iznosom (26.11.2026)**
+- Pošto je težina sada unesena za gotovo svaki artikal, uz cijenu proizvoda uvijek ide i **iznos dostave iz tabele težina** — nikad praznina.
+- Praznina „dostava: ________ KM” ostaje **samo** ako za taj artikal težina stvarno ne postoji u podacima; tada se iznos ne izmišlja.
+- Kod više proizvoda dostava se piše jednom, za zbir težina svih proizvoda u paketu (R30).
+- Popust na količinu (2 → 5%, 5 → 7%, 10 → 10%) se primjenjuje i navodi u istoj poruci (R33).

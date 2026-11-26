@@ -211,7 +211,14 @@ export function calculateOrder(input: CalculateInput): CalculationResult {
       continue;
     }
     const lineTotalCents = priceCents * item.quantity;
-    const unitWeight = typeof item.weightKg === 'number' && item.weightKg > 0 ? item.weightKg : null;
+    // R34: artikal bez tezine ne smije blokirati dostavu — koristi se
+    // podrazumijevana tezina iz Postavki (ako je unesena).
+    const fallbackWeightKg =
+      typeof input.config.fallbackWeightKg === 'number' && input.config.fallbackWeightKg > 0
+        ? input.config.fallbackWeightKg
+        : null;
+    const unitWeight =
+      typeof item.weightKg === 'number' && item.weightKg > 0 ? item.weightKg : fallbackWeightKg;
     lines.push({
       productId: item.productId,
       name: item.name,

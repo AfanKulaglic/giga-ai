@@ -330,7 +330,9 @@ export async function generateCustomerReply(args: {
     weightKg: number | null,
     currency: string,
   ): { amount: number; currency: string } | null => {
-    if (weightKg === null || weightKg <= 0) return null;
+    const fallback =
+      typeof settings.calculator.fallbackWeightKg === 'number' && settings.calculator.fallbackWeightKg > 0;
+    if ((weightKg === null || weightKg <= 0) && !fallback) return null;
     const calc = calculateOrder({
       items: [
         {
@@ -573,8 +575,12 @@ ${names}`,
     }
   }
 
+  const deliveryFallback =
+    typeof settings.calculator.fallbackWeightKg === 'number' && settings.calculator.fallbackWeightKg > 0;
+
   const guardCtx: ReplyGuardContext = {
     products: confirmedProducts,
+    deliveryFallback,
     deliveryAmount: packageDelivery ?? deliveryAmount,
     packageQuote,
     specPairs,
@@ -642,6 +648,32 @@ ${names}`,
   // Kod paketa model ponekad zalijepi dva puta isti blok sa stavkama —
   // zadrzava se prvi, da kupac ne dobije duple redove.
   if (packageQuote) body = collapseDuplicatePackageTotals(body);
+
+  // R32/R34 — tezina je sada poznata za vecinu artikala, pa dostava MORA imati
+  // iznos u poruci; praznina ostaje samo kada tezina stvarno ne postoji.
+  if (!packageQuote && confirmedProducts.length) {
+    const fallbackKg = deliveryFallback ? settings.calculator.fallbackWeightKg! : 0;
+    const weighed = confirmedProducts
+      .filter(({ product }) => isAvailable(product))
+      .map(({ product, additional }) => {
+        const own = typeof additional?.weightKg === 'number' && additional.weightKg > 0 ? additional.weightKg : 0;
+        return {
+          product,
+          weight: own > 0 ? own : fallbackKg,
+          quantity: quantityFor(product.name, lastCustomerMessage?.content ?? '') ?? 1,
+        };
+      })
+      .filter((entry) => entry.weight > 0);
+    const hasDeliveryLine = /(dostava|po[šs]tarina)[^.!?\n]{0,40}(\d|________)/i.test(body);
+    if (weighed.length && !hasDeliveryLine) {
+      const totalWeight = weighed.reduce((sum, entry) => sum + entry.weight * entry.quantity, 0);
+      const delivery = deliveryFor(weighed[0]!.product, weighed[0]!.product.price, totalWeight, weighed[0]!.product.currency);
+      if (delivery) {
+        const label = weighed.length > 1 ? 'Dostava za cijeli paket' : 'Dostava';
+        body = `${body}\n\n${label}: ${formatMoney(delivery.amount, delivery.currency)}`;
+      }
+    }
+  }
 
   // R26/R31 — kupac traži proizvod kojeg GigaHub nema na stanju (kolicina 0 ili 1):
   // poruka to mora reći, bez obzira kako je model sastavio ostatak.
