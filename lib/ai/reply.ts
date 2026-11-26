@@ -8,7 +8,7 @@ import { formatMoney } from '@/lib/domain/money';
 import type { Store } from '@/lib/store/types';
 import { sanitizeReplyText } from '@/lib/domain/text';
 import { findTypos } from '@/lib/domain/productSearch';
-import { availableColors, extractSize, familyBlock, familySizes, modelKey } from '@/lib/domain/productVariants';
+import { availableColors, extractSize, familyBlock, familySizes, isAvailable, modelKey } from '@/lib/domain/productVariants';
 import { calculateOrder } from '@/lib/domain/calculator';
 import { findPostalCodesInText, postalCodesPromptBlock } from '@/lib/domain/postalCodes';
 import { parseQuantity } from '@/lib/domain/contextSync';
@@ -79,7 +79,7 @@ function productFactsBlock(
       ].filter(Boolean);
       if (parts.length) lines.push(`  DIMENZIJE: ${parts.join(' × ')} cm`);
     }
-    if (additional?.fields.length) {
+    if (additional?.fields?.length) {
       lines.push(
         `  RUČNO DODANO (provjerio agent): ${additional.fields.map((f) => `${f.fieldName}=${f.value}${f.unit ? ` ${f.unit}` : ''}`).join('; ')}`,
       );
@@ -288,6 +288,8 @@ export async function generateCustomerReply(args: {
   };
   const addPackageItem = (entry: { product: Product; additional: { weightKg?: number | null } | null }) => {
     if (packageSeen.has(entry.product.id)) return;
+    // R26/R31: proizvod kojeg GigaHub nema na stanju ne ulazi u paket (kolicina <= 1).
+    if (!isAvailable(entry.product)) return;
     packageSeen.add(entry.product.id);
     const ref = contextRefs.find((item) => item.productId === entry.product.id);
     packageItems.push({
@@ -631,6 +633,34 @@ ${names}`,
   // Kod paketa model ponekad zalijepi dva puta isti blok sa stavkama —
   // zadrzava se prvi, da kupac ne dobije duple redove.
   if (packageQuote) body = collapseDuplicatePackageTotals(body);
+
+  // R26/R31 — kupac traži proizvod kojeg GigaHub nema na stanju (kolicina 0 ili 1):
+  // poruka to mora reći, bez obzira kako je model sastavio ostatak.
+  if (notAvailable.length) {
+    const askedWords = (lastCustomerMessage?.content ?? '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+      .split(/\s+/)
+      .filter((word) => word.length >= 4);
+    // Samo najbolje poklapanje: kupac koji pita za jedan adapter ne dobija
+    // spisak svih adaptera kojih trenutno nema.
+    const scored = notAvailable
+      .map(({ product }) => {
+        const nameWords = product.name
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+          .split(/\s+/)
+          .filter((word) => word.length >= 3);
+        const hits = askedWords.filter((word) => nameWords.some((nameWord) => nameWord.startsWith(word.slice(0, 5)))).length;
+        return { name: product.name, hits, score: nameWords.length ? hits / nameWords.length : 0 };
+      })
+      .filter((entry) => entry.hits >= 2)
+      .sort((a, b) => b.score - a.score);
+    const askedUnavailable = scored.filter((entry) => entry.score === scored[0]?.score).map((entry) => entry.name);
+    if (askedUnavailable.length && !/nemamo|nema na stanju|nije na stanju|nije dostupno/i.test(body)) {
+      body = `Trenutno nemamo na stanju: ${askedUnavailable.slice(0, 2).join(', ')}.\n\n${body}`;
+    }
+  }
   const signatureConfigured = Boolean(renderSignature(settings.signature));
   // Praznina za dostavu uvijek isto dugačka (i poslije popravki), da agent ima
   // isto mjesto za ručni upis iznosa.

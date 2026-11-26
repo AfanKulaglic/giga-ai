@@ -196,7 +196,7 @@ async function main() {
             | null;
           await db.ref(`giga_additional/${product.id}`).update({
             productId: product.id,
-            fields: existing?.fields ?? [],
+            ...(existing?.fields ? { fields: existing.fields } : {}),
             weightKg: found.weightKg,
             dimensionsCm: found.dimensionsCm,
             updatedAt: new Date().toISOString(),

@@ -422,7 +422,7 @@ export async function executeTool(name: string, rawArgs: unknown, ctx: ToolConte
         const citations: AiCitation[] = [
           { kind: 'product', label: product.name, url: product.url, detail: `Katalog, provjereno ${product.scrapedAt}` },
         ];
-        if (additional?.fields.length) {
+        if (additional?.fields?.length) {
           citations.push({
             kind: 'additional_data',
             label: `Ručno dodane specifikacije (${additional.fields.length})`,
@@ -475,7 +475,7 @@ export async function executeTool(name: string, rawArgs: unknown, ctx: ToolConte
           .map(([k, v]) => ({ field: k, scraped: v, manual: addMap.get(k.toLowerCase())!.value }));
         return build(
           true,
-          `Specifikacije: ${Object.keys(product.specifications).length} iz izvora, ${additional?.fields.length ?? 0} ručnih.`,
+          `Specifikacije: ${Object.keys(product.specifications).length} iz izvora, ${additional?.fields?.length ?? 0} ručnih.`,
           {
             productId: product.id,
             name: product.name,
@@ -499,7 +499,7 @@ export async function executeTool(name: string, rawArgs: unknown, ctx: ToolConte
           },
           [
             { kind: 'product', label: `${product.name} — specifikacije`, url: product.url, detail: `Katalog, ${product.scrapedAt}` },
-            ...(additional?.fields.length
+            ...(additional?.fields?.length
               ? [{ kind: 'additional_data' as const, label: 'Ručno dodane specifikacije', updatedAt: additional.updatedAt }]
               : []),
           ],
