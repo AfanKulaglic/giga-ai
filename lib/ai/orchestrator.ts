@@ -113,10 +113,26 @@ ZADATAK: odgovori agentu na njegovu posljednju poruku. Ako su potrebni podaci, k
     session.context = updated.context;
   };
 
+  // Isti alat sa istim argumentima drugi put ne donosi nov podatak — prekida se
+  // da model ne vrti isti krug dok ne potroši sve runde.
+  const seenCalls = new Map<string, number>();
+
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    // U zadnjoj rundi alati se NE daju: model mora napisati odgovor od podataka
+    // koje je vec dobio. Tako kupac nikad ne dobije „limit poziva alata”.
+    const toolsAllowed = round < MAX_TOOL_ROUNDS;
     const result = await chatCompletion({
-      messages: modelMessages,
-      tools: assistantToolDefinitions(),
+      messages: toolsAllowed
+        ? modelMessages
+        : [
+            ...modelMessages,
+            {
+              role: 'user' as const,
+              content:
+                'Sada napiši konačan odgovor kupcu koristeći isključivo podatke koje si već dobio. Ne pozivaj alate. Ako neki podatak nedostaje, reci da ćemo ga provjeriti.',
+            },
+          ],
+      tools: toolsAllowed ? assistantToolDefinitions() : undefined,
       temperature: 0.35,
       maxTokens: 2000,
       signal: args.signal,
@@ -132,6 +148,18 @@ ZADATAK: odgovori agentu na njegovu posljednju poruku. Ako su potrebni podaci, k
     modelMessages.push({ role: 'assistant', content: result.content || null, tool_calls: result.toolCalls });
 
     for (const call of result.toolCalls) {
+      const callKey = `${call.function.name}:${call.function.arguments}`;
+      const times = (seenCalls.get(callKey) ?? 0) + 1;
+      seenCalls.set(callKey, times);
+      if (times > 1) {
+        modelMessages.push({
+          role: 'tool',
+          tool_call_id: call.id,
+          name: call.function.name,
+          content: JSON.stringify({ note: 'Isti poziv je već izvršen — koristi već dobijene podatke i napiši odgovor.' }),
+        });
+        continue;
+      }
       const exec = await executeTool(call.function.name, parseArgs(call.function.arguments), toolCtx);
       traces.push(exec.trace);
       citations.push(...exec.citations);
@@ -145,17 +173,6 @@ ZADATAK: odgovori agentu na njegovu posljednju poruku. Ako su potrebni podaci, k
     }
 
     if (touchedProducts.size) await rememberProducts();
-
-    if (round === MAX_TOOL_ROUNDS) {
-      return {
-        answer:
-          'Dosegnut je limit broja poziva alata. Provjerite podatke ručno u katalogu ili postavite konkretnije pitanje.',
-        citations: dedupeCitations(citations),
-        toolTraces: traces,
-        model,
-        sessionLabel: session.label,
-      };
-    }
   }
 
   throw new ApiError(502, 'AI nije vratio konačan odgovor.', 'ai_no_answer');

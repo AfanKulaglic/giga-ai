@@ -188,7 +188,7 @@ export function resolveAI(env: AIEnvLike): ResolvedAI {
     timeoutMs: clamp(env.AI_TIMEOUT_MS, 60000, 5000, 180000),
     // Every tool round re-sends the whole prompt, so the free/cheap Groq plan gets
     // two rounds by default instead of three.
-    maxToolRounds: clamp(env.AI_MAX_TOOL_ROUNDS, provider === 'groq' ? 2 : 4, 1, 6),
+    maxToolRounds: clamp(env.AI_MAX_TOOL_ROUNDS, provider === 'groq' ? 2 : 6, 1, 8),
     contextMessages: clamp(env.AI_CONTEXT_MESSAGES, provider === 'groq' ? 10 : 14, 4, 40),
     reasoningEffort,
   };
