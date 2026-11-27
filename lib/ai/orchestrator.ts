@@ -140,7 +140,18 @@ ZADATAK: odgovori agentu na njegovu posljednju poruku. Ako su potrebni podaci, k
     model = result.model;
 
     if (!result.toolCalls.length) {
-      const answer = result.content.trim();
+      let answer = result.content.trim();
+      if (!answer && !toolsAllowed) {
+        // Prazan odgovor u zadnjoj rundi: jedan kratki poziv koji traži samo tekst.
+        const retry = await chatCompletion({
+          messages: [...modelMessages, { role: 'user' as const, content: 'Napiši odgovor sada, kratko i jasno, bez alata.' }],
+          temperature: 0.2,
+          maxTokens: 800,
+          signal: args.signal,
+        });
+        answer = retry.content.trim();
+        model = retry.model;
+      }
       if (!answer) throw new ApiError(502, 'AI je vratio prazan odgovor.', 'ai_empty_response');
       return { answer, citations: dedupeCitations(citations), toolTraces: traces, model, sessionLabel: session.label };
     }
