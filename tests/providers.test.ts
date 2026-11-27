@@ -52,7 +52,7 @@ describe('AI provider presets', () => {
     const deepseek = resolveAI({ AI_PROVIDER: 'deepseek' });
     expect(groq.maxToolRounds).toBeLessThanOrEqual(deepseek.maxToolRounds);
     expect(groq.contextMessages).toBeLessThan(deepseek.contextMessages);
-    expect(resolveAI({ AI_PROVIDER: 'groq', AI_MAX_TOOL_ROUNDS: '99' }).maxToolRounds).toBe(6);
+    expect(resolveAI({ AI_PROVIDER: 'groq', AI_MAX_TOOL_ROUNDS: '99' }).maxToolRounds).toBe(8);
   });
 
   it('produces an actionable setup hint naming the exact variable', () => {
