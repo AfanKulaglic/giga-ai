@@ -886,6 +886,39 @@ ${names}`,
 
   // Agent mora vidjeti šta AI nije imao, a kupac dobija prazninu za ručni upis.
   const notes: string[] = [...liveCheckNotes(liveChecks)];
+  // Agent vidi kilažu koju kupac NIKAD ne vidi (R24/R35). Kada se naručuje više
+  // stvari, dostava se računa na UKUPNU težinu paketa (R30/R32).
+  const weightLines = (packageQuote ? packageQuote.lines.map((line) => ({
+    name: line.name,
+    weightKg: line.weightKg,
+    quantity: line.quantity,
+  })) : confirmedProducts.filter(({ product }) => isAvailable(product)).map(({ product, additional }) => ({
+    name: product.name,
+    weightKg: typeof additional?.weightKg === 'number' && additional.weightKg > 0 ? additional.weightKg : null,
+    quantity: quantityFor(product.name, lastCustomerMessage?.content ?? '') ?? 1,
+  }))).map((line) => {
+    if (line.weightKg === null || line.weightKg <= 0) return `${line.name}: težina nije unesena`;
+    const total = Math.round(line.weightKg * line.quantity * 100) / 100;
+    return line.quantity > 1 ? `${line.name}: ${line.weightKg} kg × ${line.quantity} = ${total} kg` : `${line.name}: ${line.weightKg} kg`;
+  });
+  if (weightLines.length) {
+    const knownTotal = (packageQuote ? packageQuote.lines.map((line) => ({
+      weightKg: line.weightKg,
+      quantity: line.quantity,
+    })) : confirmedProducts.filter(({ product }) => isAvailable(product)).map(({ product, additional }) => ({
+      weightKg: typeof additional?.weightKg === 'number' && additional.weightKg > 0 ? additional.weightKg : 0,
+      quantity: quantityFor(product.name, lastCustomerMessage?.content ?? '') ?? 1,
+    }))).reduce((sum, line) => sum + (line.weightKg ?? 0) * line.quantity, 0);
+    const totalKg = packageQuote?.totalWeightKg ?? Math.round(knownTotal * 100) / 100;
+    notes.push(
+      `Težina za dostavu — ${weightLines.join('; ')}. UKUPNO ${totalKg} kg${
+        packageQuote?.deliveryAmount != null
+          ? ` → dostava ${formatMoney(packageQuote.deliveryAmount, packageQuote.currency)}`
+          : ''
+      }.`,
+    );
+  }
+
   const withoutWeight = confirmedProducts
     .filter(({ additional }) => typeof additional?.weightKg !== 'number' || additional.weightKg <= 0)
     .map(({ product }) => product.name);

@@ -369,17 +369,19 @@ export function calculateOrder(input: CalculateInput): CalculationResult {
 
       const tier = tiers.find((t) => totalWeightKg <= t.upToKg) ?? null;
       if (!tier) {
+        // Preko najvece tarife: kupac i dalje dobija broj (najveca tarifa), a
+        // agent dobija napomenu da provjeri — nikad praznina u poruci (R34).
         const heaviest = tiers[tiers.length - 1]!;
         issues.push({
           code: 'WEIGHT_OVER_LIMIT',
-          message: `Ukupna težina ${totalWeightKg} kg prelazi najveću tarifu (${heaviest.upToKg} kg). Potvrdite cijenu dostave ručno.`,
+          message: `Ukupna težina ${totalWeightKg} kg prelazi najveću tarifu (${heaviest.upToKg} kg) — primijenjena je najveća tarifa, provjerite cijenu dostave.`,
         });
         return {
           ruleId,
           name: ruleName,
-          amount: 0,
-          reason: `Ukupna težina ${totalWeightKg} kg prelazi najveću tarifu — dostavu potvrditi ručno.`,
-          status: 'on_request',
+          amount: heaviest.amount,
+          reason: `${ruleName}: ${totalWeightKg} kg → preko ${heaviest.upToKg} kg, naplaćena najveća tarifa ${formatMoney(heaviest.amount, currency)}.`,
+          status: 'applied',
         };
       }
 

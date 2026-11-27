@@ -261,3 +261,9 @@ Napomene za uređivanje:
 - Predlog sadrži **naziv, cijenu i dostavu** i **samo proizvode koji su na stanju** (R26).
 - Predlog nikad nije izmišljen: dolazi iz kataloga, a ako za tu grupu ništa nije na stanju, predlog se izostavlja.
 - Ako predlog nije tražen, dodatni proizvodi se ne nabrajaju.
+
+**R39 — Kilaža je za agenta, cijena i dostava za kupca (27.11.2026)**
+- U poruci kupcu uz **svaki** artikal o kojem razgovaramo stoji **cijena proizvoda i cijena dostave** (ili praznina ako težine nema).
+- Agent u internoj napomeni vidi: **težinu svakog proizvoda, količinu, ukupnu težinu paketa i iznos dostave** koji je iz toga izračunat.
+- Dostava se računa na **ukupnu težinu svega što kupac naručuje**: npr. 5 kg + 20 kg = 25 kg → tarifa do 30 kg = 15 KM.
+- Popust na količinu: cijena po komadu umanjena za procenat, pa pomnožena količinom (40 KM, 2 kom, 5% → 38 × 2 = 76 KM). Isti rezultat kao procenat na vrijednost te stavke.
