@@ -135,7 +135,8 @@ ${args.settings.ai.additionalInstructions.trim()}`
  * absolute prohibitions are repeated here in the shortest possible form.
  */
 export const HARD_STOPS = `ZABRANJENO U OVOJ PORUCI (prekršaj = poruka se odbacuje):
-izmišljena cijena, težina, dimenzija, dostupnost, rok ili cijena dostave; „nemamo“ kad proizvod postoji; cijena dostave bez unesene težine; besplatna dostava; prvo lice jednine; izvor, link, skladište ili zalihe; obećan rok dostave.
+izmišljena cijena, težina, dimenzija, dostupnost, rok ili cijena dostave; „nemamo“ kad proizvod postoji; pisanje težine ili kilograma kupcu (napiši SAMO iznos dostave); cijena dostave bez unesene težine; besplatna dostava; prvo lice jednine; izvor, link, skladište ili zalihe; obećan rok dostave.
+Dostava se računa po tabeli težine iz podataka, ali kupac vidi SAMO iznos dostave u KM — nikad „kg“, težinu ni objašnjenje kako je izračunata.
 Ako podatak nije u podacima iznad, napiši da nije unesen i da ćemo provjeriti.`;
 
 export function buildReplySystemPrompt(args: {

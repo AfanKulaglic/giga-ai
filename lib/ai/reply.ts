@@ -30,8 +30,40 @@ import {
 import { collectionLinkLine, collectionPromptBlock, matchCollection } from '@/lib/domain/collections';
 import { syncSessionFromText } from '@/lib/api/sessionContextSync';
 
+/** Dostava iz tabele tezina za jedan proizvod (R32). Kupac vidi samo iznos. */
+function weightDelivery(
+  product: Product,
+  weightKg: number | null | undefined,
+  calculator: import('@/lib/domain/types').CalculatorConfig,
+): { amount: number; currency: string } | null {
+  const fallback =
+    typeof calculator.fallbackWeightKg === 'number' && calculator.fallbackWeightKg > 0
+      ? calculator.fallbackWeightKg
+      : null;
+  const weight = typeof weightKg === 'number' && weightKg > 0 ? weightKg : fallback;
+  if (weight === null) return null;
+  const result = calculateOrder({
+    items: [
+      {
+        productId: product.id,
+        name: product.name,
+        sku: product.sku,
+        unitPrice: product.price,
+        quantity: 1,
+        weightKg: weight,
+        currentCatalogPrice: product.price,
+      },
+    ],
+    config: calculator,
+  });
+  return result.delivery.status === 'applied' && result.delivery.amount > 0
+    ? { amount: result.delivery.amount, currency: result.currency || product.currency }
+    : null;
+}
+
 function productFactsBlock(
   products: { product: Product; additional: import('@/lib/domain/types').ProductAdditionalData | null }[],
+  calculator: import('@/lib/domain/types').CalculatorConfig,
 ): string {
   if (!products.length) {
     return 'PROIZVODI: nijedan proizvod nije potvrđen u ovoj sesiji. Ne navodi cijene ni specifikacije i ne tvrdi da proizvod imamo.';
@@ -58,11 +90,16 @@ function productFactsBlock(
         `  OPIS IZ IZVORA (citiraj samo ono što ovdje piše): ${described.length > 240 ? `${described.slice(0, 240)}…` : described}`,
       );
     }
-    if (additional?.weightKg !== null && additional?.weightKg !== undefined) {
-      lines.push(`  TEŽINA: ${additional.weightKg} kg (koristi se za dostavu)`);
+    // R24: kupac nikad ne vidi tezinu — samo iznos dostave iz tabele.
+    const delivery = weightDelivery(product, additional?.weightKg, calculator);
+    if (delivery) {
+      lines.push(
+        `  DOSTAVA (obračunata po tabeli težine): ${formatMoney(delivery.amount, delivery.currency)} — ` +
+          'kupcu napiši SAMO taj iznos. NIKAD ne piši težinu, kilažu ni "kg" (R24).',
+      );
     } else {
       lines.push(
-        '  TEŽINA: NIJE UNESENA U SISTEM — ovo je INTERNO, kupcu se o tome NE PIŠE NIŠTA. ' +
+        '  DOSTAVA: nema podatka o težini — ovo je INTERNO, kupcu se o tome NE PIŠE NIŠTA. ' +
           'Uz cijenu ovog proizvoda napiši samo „dostava: ________ KM” (praznina koju agent dopuni). ' +
           'Nikad ne nagađaj iznos i nikad ne objašnjavaj kupcu da težina nedostaje (R24).',
       );
@@ -478,7 +515,7 @@ export async function generateCustomerReply(args: {
   const userContent = [
     `KONTEKST SESIJE:
 ${contextText || '(nema strukturiranih podataka)'}`,
-    productFactsBlock(confirmedProducts),
+    productFactsBlock(confirmedProducts, settings.calculator),
     ...dimensionBlocks,
     packageQuote ? packagePromptBlock(packageQuote) : '',
     ...(packageQuote ? [] : deliveryBlocks),
