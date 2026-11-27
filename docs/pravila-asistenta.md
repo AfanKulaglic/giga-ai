@@ -238,3 +238,9 @@ Napomene za uređivanje:
 - Praznina „dostava: ________ KM” ostaje **samo** ako za taj artikal težina stvarno ne postoji u podacima; tada se iznos ne izmišlja.
 - Kod više proizvoda dostava se piše jednom, za zbir težina svih proizvoda u paketu (R30).
 - Popust na količinu (2 → 5%, 5 → 7%, 10 → 10%) se primjenjuje i navodi u istoj poruci (R33).
+
+**R35 — Dostava se obračunava po težini (formulacija za kupca) (27.11.2026)**
+- Kupcu se **smije** reći: „Dostava se obračunava prema težini pošiljke.” To zvuči tačno i razumljivo.
+- Kupcu se **nikad** ne navodi broj kilograma, ni tabela težina, ni objašnjenje kako je iznos izračunat.
+- Zabranjeno je i pisati da težina „nije unesena”, da je „nemamo u sistemu” ili da se dostava „ne može izračunati” (R24).
+- Uz svaku cijenu proizvoda / dimenzije stoji iznos dostave u KM ili praznina „dostava: ________ KM” (R34).

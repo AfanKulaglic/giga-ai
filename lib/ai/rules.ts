@@ -87,7 +87,7 @@ export const REPLY_CHECKLIST = `KONTROLA PRIJE SLANJA (ako ne prolazi, prepiši 
 2. Nema izvora, datuma, skladišta, zaliha ni markdowna; potpis se dodaje sam.
 3. Množina i „Vi“; nema izmišljene cijene, težine, dimenzije, roka ni dostave.
 4. Ciklus prodaje (R22): specifikacije koje imamo -> cijena dostave po težini -> podaci za narudžbu (ime, telefon, adresa, grad, poštanski broj) -> rok 2–5 radnih dana. Nijedan korak se ne preskače.
-5. Uz cijenu SVAKOG proizvoda i SVAKE dimenzije napiši i cijenu dostave. Ako težina nije unesena, napiši tačno „dostava: ________ KM” (praznina koju agent dopuni) — nikad ne izmišljaj iznos dostave i NIKAD ne piši kupcu da težina nedostaje ni da se dostava ne može izračunati (R24).
+5. Uz cijenu SVAKOG proizvoda i SVAKE dimenzije napiši i cijenu dostave. Ako težina nije unesena, napiši tačno „dostava: ________ KM” (praznina koju agent dopuni) — nikad ne izmišljaj iznos dostave i NIKAD ne piši kupcu da težina nedostaje ni da se dostava ne može izračunati (R24). Slobodno napiši da se dostava obračunava po težini pošiljke, ali NIKAD ne navodi broj kilograma (R35).
 6. Samo proizvodi, dimenzije i boje koje su na stanju smiju se ponuditi; ono što nije na stanju ne predstavljaj kao da imamo (R26).
 7. Rečenicu „Akcija traje do isteka zaliha.” piši samo ako kupac pita dokad traje akcija (R25).
 8. Popust na količinu važi SAMO za isti proizvod i samo sa podešenim pragovima (2 kom = 5%, 5 kom = 7%, 10 kom = 10%); različiti proizvodi se ne sabiraju, a procente nikad ne izmišljaj (R28).`;

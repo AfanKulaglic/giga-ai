@@ -85,9 +85,10 @@ const MONEY_IN_TEXT = /\d[\d.\s]*(?:[.,]\d{1,2})?\s*(?:KM|BAM)/i;
 const QUANTITY_DISCOUNT =
   /(\d+\s*komada|kolicin\w*|količin\w*|dva\s+komada|drugi\s+komad)[^.\n]{0,60}\d{1,2}\s*%|\d{1,2}\s*%\s*(popusta\s+)?(na|za)\s+kolicin\w*|\d{1,2}\s*%\s*(popusta\s+)?(na|za)\s+količin\w*/i;
 // R24: kupcu se nikad ne objasnjava da tezina nedostaje — samo praznina.
-// Svako spominjanje tezine (kg) ili nase unutrasnje baze ide kupcu kao greska.
+// R35: recenica „dostava se obracunava po tezini” je DOZVOLJENA; broj kg i
+// izvinjenja o nedostajucoj tezini nisu.
 const WEIGHT_DISCLOSURE =
-  /(te[žz]in\w*|kila[žz]\w*)|\b\d+[.,]?\d*\s*kg\b|(nije|nijesu|nisu)\s+(une[st]sen\w*|dostupn\w*\s+u\s+na[šs]\w*\s+sistem)|u\s+na[šs]\w*\s+sistem\w*|ne\s+mo[žz]emo\s+(izračunati|izracunati)|ne\s+znamo\s+(cijenu\s+)?dostav|iznos\s+dostave\s+će(te|mo)/i;
+  /\b\d+[.,]?\d*\s*kg\b|(te[žz]in\w*|kila[žz]\w*)[^.!?\n]{0,40}(nije|nijesu|nisu|nemamo|nepoznat|bez\s+podatka)|(nije|nijesu|nisu)\s+(une[st]sen\w*|dostupn\w*\s+u\s+na[šs]\w*\s+sistem)|u\s+na[šs]\w*\s+sistem\w*|ne\s+mo[žz]emo\s+(izračunati|izracunati)|ne\s+znamo\s+(cijenu\s+)?dostav|iznos\s+dostave\s+će(te|mo)/i;
 // R12: postanski broj smije doci samo iz tabele ili od kupca, nikad izmisljen.
 const POSTAL_CODE = /\b7\d{4}\b/g;
 // R26: rečenica koja tvrdi da imamo nešto (za proizvode koji nisu na stanju).
