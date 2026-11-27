@@ -223,9 +223,11 @@ describe('delivery by weight', () => {
     expect(result.issues.some((i) => i.code === 'WEIGHT_MISSING')).toBe(true);
   });
 
-  it('asks for confirmation above the heaviest tier', () => {
+  it('above the heaviest tier charges the heaviest tier and warns the agent', () => {
     const result = calculateOrder(base(45));
-    expect(result.delivery.status).toBe('on_request');
+    expect(result.delivery.status).toBe('applied');
+    // Najveća tarifa u ovom testu ide do 20 kg i iznosi 20 KM.
+    expect(result.delivery.amount).toBe(20);
     expect(result.issues.some((i) => i.code === 'WEIGHT_OVER_LIMIT')).toBe(true);
   });
 });
