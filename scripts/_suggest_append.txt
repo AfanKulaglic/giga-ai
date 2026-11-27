@@ -1,0 +1,14 @@
+  // Predlog dodatnog proizvoda se dodaje i u kodu, da ne zavisi od modela:
+  // kupac uvijek dobije konkretan sto uz stolicu, sa cijenom i dostavom.
+  if (suggestions.length && asksForSuggestion([args.instruction ?? '', lastCustomerMessage?.content ?? ''].join(' '))) {
+    const suggestionLines = suggestions.map(({ product, additional }) => {
+      const price = formatMoney(product.price ?? 0, product.currency);
+      const delivery = weightDelivery(product, additional?.weightKg, settings.calculator);
+      return '• ' + product.name + ' — ' + price + (delivery ? ', dostava ' + formatMoney(delivery.amount, delivery.currency) : '');
+    });
+    const alreadyListed = suggestions.every(({ product }) => body.includes(product.name));
+    if (!alreadyListed) {
+      body = body + '\n\nUz to Vam predlažemo:\n' + suggestionLines.join('\n');
+    }
+  }
+

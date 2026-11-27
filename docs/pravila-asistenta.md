@@ -255,3 +255,9 @@ Napomene za uređivanje:
 - Poruka se **uvijek** završava žigom (potpisom) iz Postavki → Žig, tačno onako kako je tamo upisan.
 - Ovo ne zavisi od modela: pozdrav i žig dodaje aplikacija u kodu, pa se ne mogu izgubiti.
 - Ako je model već napisao pozdrav, ne dodaje se drugi; žig se nikad ne duplira.
+
+**R38 — Predlog dodatnog proizvoda uz traženi (27.11.2026)**
+- Kada agent napiše „predloži nešto uz ovaj proizvod" (ili kupac pita šta ide uz njega), uz odgovor ide **predlog iz kataloga**: stolica → stol, stol → stolica, krevet → madrac, garnitura → fotelja, ormar → komoda.
+- Predlog sadrži **naziv, cijenu i dostavu** i **samo proizvode koji su na stanju** (R26).
+- Predlog nikad nije izmišljen: dolazi iz kataloga, a ako za tu grupu ništa nije na stanju, predlog se izostavlja.
+- Ako predlog nije tražen, dodatni proizvodi se ne nabrajaju.

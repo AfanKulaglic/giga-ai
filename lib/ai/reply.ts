@@ -9,6 +9,7 @@ import type { Store } from '@/lib/store/types';
 import { sanitizeReplyText } from '@/lib/domain/text';
 import { findTypos } from '@/lib/domain/productSearch';
 import { availableColors, extractSize, familyBlock, familySizes, isAvailable, modelKey } from '@/lib/domain/productVariants';
+import { asksForSuggestion, complementaryGroup, groupSearchTerm, matchesGroup } from '@/lib/domain/complementary';
 import { calculateOrder } from '@/lib/domain/calculator';
 import { findPostalCodesInText, postalCodesPromptBlock } from '@/lib/domain/postalCodes';
 import { parseQuantity } from '@/lib/domain/contextSync';
@@ -54,7 +55,12 @@ function ensureGreeting(body: string): string {
       break;
     }
   }
-  return 'Poštovani,\n\n' + text.slice(cut).trim();
+  // Model nekad ubaci još jedan „Poštovani” u sredinu poruke — ostaje samo prvi.
+  const rest = text
+    .slice(cut)
+    .replace(/\n\s*(?:poštovani|postovani)\s*[,!.]?\s*\n+/gi, '\n')
+    .trim();
+  return 'Poštovani,\n\n' + rest;
 }
 
 /** Dostava iz tabele tezina za jedan proizvod (R32). Kupac vidi samo iznos. */
@@ -283,6 +289,31 @@ export async function generateCustomerReply(args: {
     .sort((a, b) => b.score - a.score || a.index - b.index);
   const rankedProducts = scoredProducts.map((item) => item.entry);
   const confirmedProducts = rankedProducts.slice(0, 5);
+
+  // Dodatna prodaja: „predloži neki sto uz ovu stolicu" — predlog dolazi iz
+  // kataloga (na stanju, sa cijenom i dostavom), nikad iz mašte modela.
+  const suggestionText = [args.instruction ?? '', lastCustomerMessage?.content ?? ''].join(' ');
+  const suggestionGroup = asksForSuggestion(suggestionText)
+    ? complementaryGroup(confirmedProducts[0]?.product.name ?? '')
+    : null;
+  const suggestions: { product: Product; additional: import('@/lib/domain/types').ProductAdditionalData | null }[] = [];
+  if (suggestionGroup) {
+    // Pretraga ide po pojmu grupe („stol"), a prihvata se samo proizvod koji
+    // stvarno pripada toj grupi — da uz stolicu ne izađe druga stolica.
+    const hits = await store.searchProductsWithAdditional(groupSearchTerm(suggestionGroup), 40);
+    const takenIds = new Set(confirmedProducts.map((entry) => entry.product.id));
+    const families = new Set<string>();
+    for (const hit of hits) {
+      if (takenIds.has(hit.product.id)) continue;
+      if (!matchesGroup(hit.product.name, suggestionGroup)) continue;
+      if (!isAvailable(hit.product) || hit.product.price === null) continue;
+      const family = modelKey(hit.product.name);
+      if (families.has(family)) continue;
+      families.add(family);
+      suggestions.push(hit);
+      if (suggestions.length >= 3) break;
+    }
+  }
 
   // Potpuna ponuda dolazi iz šire pretrage: sve što je na stanju, do 15 stavki.
   // U ponudu ulazi samo ono što je stvarno traženo (kupac pita za grebalice =>
@@ -539,6 +570,23 @@ export async function generateCustomerReply(args: {
     : offerPromptBlock(offerProducts, offerProducts.length);
   const offerLinkLine = offerCollection ? collectionLinkLine(offerCollection) : null;
 
+  // Popis stvarnih predloga iz kataloga (ime, cijena, dostava) — model samo
+  // bira kako će ih izgovoriti, ne izmišlja proizvode.
+  const suggestionLines = suggestions.map(({ product, additional }) => {
+    const price = formatMoney(product.price ?? 0, product.currency);
+    const delivery = weightDelivery(product, additional?.weightKg, settings.calculator);
+    return delivery
+      ? `  - ${product.name}: ${price}, dostava ${formatMoney(delivery.amount, delivery.currency)}`
+      : `  - ${product.name}: ${price}`;
+  });
+  const suggestionBlock = suggestions.length
+    ? [
+        'PREDLOZI ZA DODATNU PRODAJU (stvarno na stanju — smiješ ih ponuditi):',
+        ...suggestionLines,
+        'Ako je predlog tražen, navedi ove proizvode kao kombinaciju uz traženi proizvod, sa cijenom i dostavom. Ako nije tražen, ne spominji ih.',
+      ].join('\n')
+    : '';
+
   const userContent = [
     `KONTEKST SESIJE:
 ${contextText || '(nema strukturiranih podataka)'}`,
@@ -550,6 +598,7 @@ ${contextText || '(nema strukturiranih podataka)'}`,
     orderConfirmedBlock,
     notAvailableBlock,
     quantityBlock,
+    suggestionBlock,
     typoBlock,
     postalBlock,
     transcript,
@@ -791,6 +840,18 @@ ${names}`,
     }
   }
   // R2/R37: poruka uvijek pocinje sa „Poštovani” i zavrsava zigom iz Postavki.
+  // Predlog dodatnog proizvoda ide i iz koda, da ne zavisi od modela.
+  if (suggestions.length && asksForSuggestion([args.instruction ?? '', lastCustomerMessage?.content ?? ''].join(' '))) {
+    const suggestionLines = suggestions.map(({ product, additional }) => {
+      const price = formatMoney(product.price ?? 0, product.currency);
+      const delivery = weightDelivery(product, additional?.weightKg, settings.calculator);
+      return '• ' + product.name + ' — ' + price + (delivery ? ', dostava ' + formatMoney(delivery.amount, delivery.currency) : '');
+    });
+    const alreadyListed = suggestions.every(({ product }) => body.includes(product.name));
+    if (!alreadyListed) {
+      body = body + '\n\nUz to Vam predlažemo:\n' + suggestionLines.join('\n');
+    }
+  }
   body = ensureGreeting(body);
   const fullText = appendSignature(body, settings.signature);
 
