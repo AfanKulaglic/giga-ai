@@ -37,11 +37,24 @@ import { syncSessionFromText } from '@/lib/api/sessionContextSync';
 function ensureGreeting(body: string): string {
   const text = body.trim();
   if (!text) return text;
-  const already = /^(poštovani|postovani|dobar dan|dobro jutro|dobro veče|dobar večer)/i.test(text);
-  if (already) return text;
-  return `Poštovani,
-
-${text}`;
+  // Ponovljeni pozdravi na pocetku se svode na jedan; pozdrav je uvijek prvi.
+  const greetings = ['poštovani', 'postovani', 'dobar dan', 'dobro jutro', 'dobro veče', 'dobar večer'];
+  const lower = text.toLowerCase();
+  let cut = 0;
+  let found = true;
+  while (found) {
+    found = false;
+    for (const greeting of greetings) {
+      if (!lower.startsWith(greeting, cut)) continue;
+      let index = cut + greeting.length;
+      while (index < text.length && ' ,!.'.includes(text[index] ?? '')) index += 1;
+      while (index < text.length && /[\s]/.test(text[index] ?? '')) index += 1;
+      cut = index;
+      found = true;
+      break;
+    }
+  }
+  return 'Poštovani,\n\n' + text.slice(cut).trim();
 }
 
 /** Dostava iz tabele tezina za jedan proizvod (R32). Kupac vidi samo iznos. */
