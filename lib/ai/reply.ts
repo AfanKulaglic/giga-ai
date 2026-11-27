@@ -30,6 +30,20 @@ import {
 import { collectionLinkLine, collectionPromptBlock, matchCollection } from '@/lib/domain/collections';
 import { syncSessionFromText } from '@/lib/api/sessionContextSync';
 
+/**
+ * R37: svaka poruka za kupca pocinje pozdravom „Poštovani”. Ako ga model nije
+ * napisao (ili je poceo sa „Nemamo…”, listom ili cijenom), pozdrav se dodaje.
+ */
+function ensureGreeting(body: string): string {
+  const text = body.trim();
+  if (!text) return text;
+  const already = /^(poštovani|postovani|dobar dan|dobro jutro|dobro veče|dobar večer)/i.test(text);
+  if (already) return text;
+  return `Poštovani,
+
+${text}`;
+}
+
 /** Dostava iz tabele tezina za jedan proizvod (R32). Kupac vidi samo iznos. */
 function weightDelivery(
   product: Product,
@@ -763,6 +777,8 @@ ${names}`,
       body = lines.filter((line) => !isBlankOnly(line)).join('\n').replace(/\n{3,}/g, '\n').trim();
     }
   }
+  // R2/R37: poruka uvijek pocinje sa „Poštovani” i zavrsava zigom iz Postavki.
+  body = ensureGreeting(body);
   const fullText = appendSignature(body, settings.signature);
 
   const citations: AiCitation[] = [

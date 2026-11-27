@@ -8,6 +8,11 @@ import { cn } from '@/lib/utils';
 interface AIUsage {
   day: string;
   calls: number;
+  /** Dnevni limit poziva; null znaci da model nema dnevni limit. */
+  requestLimit?: number | null;
+  /** Tacan postotak potrosenih poziva (null kada limita nema). */
+  requestPercent?: number | null;
+  hasLimit?: boolean;
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
@@ -68,15 +73,29 @@ export function AIUsagePill() {
 
   if (!usage) return null;
 
+  const requestLimit = usage.requestLimit ?? null;
+  const requestPercent = usage.requestPercent ?? null;
+  const hasLimit = usage.hasLimit ?? requestLimit !== null;
   const remaining = Math.max(0, usage.limit - usage.totalTokens);
-  const tone =
-    usage.percent >= 90 ? 'text-danger' : usage.percent >= 60 ? 'text-[hsl(var(--warning))]' : 'text-muted-foreground';
+  const tone = !hasLimit
+    ? 'text-muted-foreground'
+    : (requestPercent ?? 0) >= 90
+      ? 'text-danger'
+      : (requestPercent ?? 0) >= 60
+        ? 'text-[hsl(var(--warning))]'
+        : 'text-muted-foreground';
   const title = [
-    `Danas: ${usage.calls} AI poziva, ${usage.totalTokens.toLocaleString('bs-BA')} tokena`,
+    hasLimit
+      ? `Danas: ${usage.calls} od ${requestLimit} poziva (${requestPercent}%)`
+      : `Danas: ${usage.calls} AI poziva — model nema dnevni limit`,
+    `Tokena ukupno: ${usage.totalTokens.toLocaleString('bs-BA')}`,
     ...(usage.byModel ?? []).map(
       (entry) => `  • ${entry.model}: ${entry.tokens.toLocaleString('bs-BA')} tokena (${entry.calls} poziva)`,
     ),
-    `Preostalo: ${remaining.toLocaleString('bs-BA')} od ${usage.limit.toLocaleString('bs-BA')}`,
+    hasLimit && requestLimit
+      ? `Preostalo poziva: ${Math.max(0, requestLimit - usage.calls)} od ${requestLimit}`
+      : null,
+    `Tokena do budžeta: ${remaining.toLocaleString('bs-BA')} od ${usage.limit.toLocaleString('bs-BA')}`,
     `Model: ${usage.model}`,
     usage.estimatedCostUsd > 0 ? `Procjena troška: $${usage.estimatedCostUsd.toFixed(3)}` : null,
     `Reset kvote: ${new Date(usage.resetAt).toLocaleTimeString('bs-BA', { hour: '2-digit', minute: '2-digit' })} (za ${resetLabel(usage.resetInMinutes)})`,
@@ -89,17 +108,30 @@ export function AIUsagePill() {
     <Link
       href="/settings"
       title={title}
-      aria-label={`Potrošnja AI kredita danas: ${usage.totalTokens} tokena`}
+      aria-label={
+        hasLimit
+          ? `Potrošnja AI danas: ${usage.calls} od ${requestLimit} poziva (${requestPercent}%)`
+          : `Potrošnja AI danas: ${usage.calls} poziva, bez dnevnog limita`
+      }
       className={cn(
         'inline-flex h-8 items-center gap-1.5 rounded-lg border bg-background px-2 text-[11.5px] font-medium tabular-nums transition-colors hover:bg-muted/60',
         tone,
       )}
     >
       <Coins className="h-3.5 w-3.5" />
-      <span>{compact(usage.totalTokens)}</span>
-      <span className="hidden text-[10px] font-normal text-muted-foreground/60 sm:inline">tokena</span>
-      <span className="text-muted-foreground/70">/ {compact(usage.limit)}</span>
-      {usage.percent >= 80 ? <span className="font-semibold">{usage.percent}%</span> : null}
+      {hasLimit ? (
+        <>
+          <span>{usage.calls}</span>
+          <span className="text-muted-foreground/70">/ {requestLimit}</span>
+          <span className="font-semibold">{requestPercent}%</span>
+        </>
+      ) : (
+        <>
+          <span>{usage.calls}</span>
+          <span className="text-[10px] font-normal text-muted-foreground/60 sm:inline">poziva</span>
+          <span className="text-muted-foreground/70">· bez limita</span>
+        </>
+      )}
       <span className="hidden text-[10px] font-normal text-muted-foreground/60 sm:inline">
         reset {resetLabel(usage.resetInMinutes)}
       </span>

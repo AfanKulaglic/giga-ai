@@ -249,3 +249,9 @@ Napomene za uređivanje:
 - Pravilo **R15** („ako proizvod nema težinu, to se uvijek kaže kupcu") **više ne važi** i ne primjenjuje se.
 - Umjesto njega važe R24, R34 i R35: kupcu se nikad ne piše da težina nedostaje; uz cijenu stoji iznos dostave ili praznina „dostava: ________ KM".
 - Razlog: težina je sada unesena za 1.716 od 2.345 artikala iz GigaHuba, a za ostale se koristi podrazumijevana težina iz Postavki.
+
+**R37 — Poruka uvijek počinje sa „Poštovani" i završava žigom (27.11.2026)**
+- Svaka poruka za kupca počinje pozdravom: **„Poštovani,"** pa prazan red, pa sadržaj.
+- Poruka se **uvijek** završava žigom (potpisom) iz Postavki → Žig, tačno onako kako je tamo upisan.
+- Ovo ne zavisi od modela: pozdrav i žig dodaje aplikacija u kodu, pa se ne mogu izgubiti.
+- Ako je model već napisao pozdrav, ne dodaje se drugi; žig se nikad ne duplira.

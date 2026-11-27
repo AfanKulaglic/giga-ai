@@ -29,6 +29,29 @@ const PRICES_PER_MILLION: Record<string, { input: number; output: number }> = {
   'gemini-3.1-flash-lite': { input: 0.1, output: 0.4 },
 };
 
+/**
+ * Google free tier broji ZAHTJEVE (500 dnevno po projektu), ne tokene, pa je
+ * procenat potrosnje tacan samo ako se racuna iz broja poziva. Provider bez
+ * poznatog dnevnog limita vraca null — tada se u aplikaciji pise „bez limita”.
+ */
+const DEFAULT_REQUEST_LIMITS: Record<string, number | null> = {
+  gemini: 500,
+  groq: null,
+  deepseek: null,
+  openai: null,
+  ollama: null,
+};
+
+/** Dnevni limit poziva: AI_DAILY_REQUEST_LIMIT=0 znaci „nema limita”. */
+export function dailyRequestLimit(): number | null {
+  const raw = (process.env.AI_DAILY_REQUEST_LIMIT ?? '').trim();
+  if (raw !== '') {
+    const value = Number(raw);
+    if (Number.isFinite(value)) return value > 0 ? Math.round(value) : null;
+  }
+  return DEFAULT_REQUEST_LIMITS[serverEnv.ai.provider] ?? null;
+}
+
 /** Daily token budget shown in Settings; override with AI_DAILY_TOKEN_BUDGET. */
 function dailyBudget(): number {
   const fromEnv = Number(process.env.AI_DAILY_TOKEN_BUDGET);
@@ -38,6 +61,12 @@ function dailyBudget(): number {
 export interface AIUsageSummary {
   day: string;
   calls: number;
+  /** Dnevni limit broja poziva (null = model nema dnevni limit). */
+  requestLimit: number | null;
+  /** Postotak potrosenih poziva; null kada limita nema. */
+  requestPercent: number | null;
+  /** Postoji li stvarni dnevni limit za ovaj model. */
+  hasLimit: boolean;
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
@@ -109,9 +138,13 @@ export async function recordAIUsage(usage: {
 
 export async function getTodayAIUsage(): Promise<AIUsageSummary> {
   const day = new Date().toISOString().slice(0, 10);
+  const requestLimit = dailyRequestLimit();
   const empty: AIUsageSummary = {
     day,
     calls: 0,
+    requestLimit,
+    requestPercent: requestLimit ? 0 : null,
+    hasLimit: requestLimit !== null,
     promptTokens: 0,
     completionTokens: 0,
     totalTokens: 0,
@@ -161,6 +194,7 @@ export async function getTodayAIUsage(): Promise<AIUsageSummary> {
       completionTokens,
       totalTokens,
       percent: Math.min(100, Math.round((totalTokens / empty.limit) * 100)),
+      requestPercent: requestLimit === null ? null : Math.min(100, Math.round((calls / requestLimit) * 100)),
       estimatedCostUsd: Math.round(estimatedCostUsd * 10000) / 10000,
       byModel: [...perModel.entries()]
         .map(([model, value]) => ({ model, calls: value.calls, tokens: value.tokens }))
