@@ -244,3 +244,8 @@ Napomene za uređivanje:
 - Kupcu se **nikad** ne navodi broj kilograma, ni tabela težina, ni objašnjenje kako je iznos izračunat.
 - Zabranjeno je i pisati da težina „nije unesena”, da je „nemamo u sistemu” ili da se dostava „ne može izračunati” (R24).
 - Uz svaku cijenu proizvoda / dimenzije stoji iznos dostave u KM ili praznina „dostava: ________ KM” (R34).
+
+**R36 — R15 više ne važi: kupcu se ne govori o težini (27.11.2026)**
+- Pravilo **R15** („ako proizvod nema težinu, to se uvijek kaže kupcu") **više ne važi** i ne primjenjuje se.
+- Umjesto njega važe R24, R34 i R35: kupcu se nikad ne piše da težina nedostaje; uz cijenu stoji iznos dostave ili praznina „dostava: ________ KM".
+- Razlog: težina je sada unesena za 1.716 od 2.345 artikala iz GigaHuba, a za ostale se koristi podrazumijevana težina iz Postavki.
